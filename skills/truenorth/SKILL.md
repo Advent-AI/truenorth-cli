@@ -18,9 +18,36 @@ metadata:
 
 **Routing gate (anti-collision):** apply this skill only when the message includes a **crypto analysis/research action**. If the user wants to **trade, swap, transfer, or manage a wallet** — that is NOT this skill. TrueNorth is read-only market intelligence; it does not execute trades or manage funds.
 
+## CRITICAL: NER First Rule
+
+**ALWAYS run `tn ner` as the FIRST STEP when the user mentions specific tokens, networks, or protocols.** This standardizes token identifiers before calling any analysis tool.
+
+✅ **Correct flow:**
+```
+User: "Analyze Bitcoin"
+Step 1: tn ner "Analyze Bitcoin" --json
+        → Returns: token_addresses: ["bitcoin"]
+Step 2: tn ta bitcoin --json
+Step 3: tn deriv bitcoin --json
+```
+
+❌ **WRONG — never skip NER:**
+```
+User: "Analyze Ethereum"
+Step 1: tn ta ethereum --json    ← Should run NER first!
+```
+
+**Why NER is critical:**
+- Standardizes token identifiers (ETH → ethereum, BTC → bitcoin, SOL → solana)
+- Resolves ambiguous names (e.g., "USDT on Solana" vs "USDT on Ethereum")
+- Extracts multiple tokens from complex queries (e.g., "compare ETH and SOL")
+- Provides normalized addresses for accurate data fetching
+
+**Skip NER only when:** the query has no specific token/coin (e.g., "top performing tokens", "DeFi protocols by TVL").
+
 ## Intent routing
 
-Match the user's message to the **first** matching row.
+Match the user's message to the **first** matching row. **Remember: run NER first for any token-specific query.**
 
 ### Technical analysis
 
