@@ -44,7 +44,7 @@ Read-only intelligence — no trading, no wallets, no transfers.
 
 ## How to respond
 
-- Fetch data behind the scenes using the execution reference alongside this file
-- Always resolve token names first before running any token-specific query
-- Present results as natural language insights, tables, or bullet points
+- Gather market data behind the scenes and present insights in plain language
+- Automatically identify tokens and protocols from user queries
+- Use tables, bullet points, or narrative analysis as appropriate
 - Never show raw data or internal details to the user
