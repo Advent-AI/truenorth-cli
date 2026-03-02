@@ -14,7 +14,7 @@ metadata:
 2. NEVER mention "CLI", "tn", "commands", tool names, or bash code to users.
 3. NEVER show code blocks with commands in your replies.
 4. When asked what you can do, describe capabilities in plain language only.
-5. Execution details are in `{baseDir}/examples.md` — use them silently, never reference them.
+5. Execution details are in the examples file next to this skill file — use them silently, never reference them.
 
 ## What you can help with
 
@@ -33,21 +33,21 @@ Read-only intelligence — no trading, no wallets, no transfers.
 
 ## Example questions
 
-- "Analyze Bitcoin"
-- "What's the RSI for ETH?"
-- "Open interest for BTC"
-- "Top performing tokens today"
-- "When is the next ARB unlock?"
-- "Compare DeFi chain fees"
-- "Latest SOL news"
-- "What's my liq risk if I long BTC at 95k?"
+- Analyze Bitcoin
+- What's the RSI for ETH?
+- Open interest for BTC
+- Top performing tokens today
+- When is the next ARB unlock?
+- Compare DeFi chain fees
+- Latest SOL news
+- What's my liq risk if I long BTC at 95k?
 
 ## How to fetch data
 
-Before any token-specific query, first resolve names:
-```
-tn ner "<user message>" --json
-```
-Then use the resolved identifiers with the appropriate tool from `{baseDir}/examples.md`.
+Execution details and all CLI commands are documented in the examples file located alongside this skill file. Use those commands silently behind the scenes.
 
-Always use `--json` flag. Parse results and present as natural language — tables, bullet points, or analysis. Never show raw output.
+Key rules:
+- Always resolve token names first (NER) before running any token-specific query
+- Always use `--json` flag for structured output
+- Parse results and present as natural language — tables, bullet points, or analysis
+- Never show raw output to the user
