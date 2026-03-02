@@ -1,0 +1,74 @@
+name: OpenCode Review (MiniMax)
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  review:
+    if: |
+      github.event_name == 'pull_request' ||
+      contains(github.event.comment.body, '/oc')
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git identity
+        run: |
+          git config user.name "opencode-review[bot]"
+          git config user.email "opencode-review[bot]@users.noreply.github.com"
+
+      - name: Run OpenCode with MiniMax
+        uses: anomalyco/opencode/github@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
+        with:
+          model: minimax/MiniMax-M2.1
+          use_github_token: true
+          prompt: |
+            Review this pull request with focus on code quality and readability.
+
+            ## Review Checklist
+
+            ### Readability
+            - Are variable and function names descriptive and self-documenting?
+            - Are functions short and focused (ideally < 50 lines)?
+            - Is there deeply nested code (> 3 levels) that should be flattened?
+            - Are there magic numbers or unclear constants that need named variables?
+            - Is the control flow easy to follow?
+
+            ### Code Quality
+            - Are there potential bugs or logic errors?
+            - Is error handling appropriate (not too broad, not missing)?
+            - Are there unnecessary complexity or over-engineering?
+            - Do functions have too many parameters (> 5)?
+            - Are there duplicated code blocks that should be extracted?
+
+            ### TypeScript / Project Conventions
+            - Are type annotations present and accurate?
+            - Are interfaces used for structured data (not `any` or `unknown` where avoidable)?
+            - Are ESM imports used with `.js` extensions?
+            - Is error handling consistent (wrapAction pattern)?
+            - Are there hardcoded values that should be configurable?
+
+            ## Instructions
+            - Post inline comments on specific lines where issues are found.
+            - For each issue, explain WHY it hurts readability and suggest a concrete fix.
+            - Prioritize: bugs > readability > style > minor nits.
+            - Do NOT comment on things that are already clean and readable.
+            - Keep the summary section brief; put details in inline comments.
