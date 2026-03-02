@@ -4,28 +4,6 @@ import { executeTool } from "../api/tools.js";
 import { startSpinner, formatResult, formatDuration, printJson, isJsonMode, wrapAction, addJsonOption } from "../utils.js";
 
 export function registerSearchCommand(program: Command): void {
-  const cmd = program
-    .command("search <query>")
-    .description("Web search for crypto topics");
-
-  addJsonOption(cmd);
-
-  cmd.action(
-    wrapAction(async (query: unknown, _opts: unknown) => {
-      const opts = _opts as Record<string, unknown>;
-      const args: Record<string, unknown> = { query: query as string };
-
-      const spinner = startSpinner(`Searching "${chalk.cyan(query as string)}"…`);
-      const result = await executeTool("web_search", args);
-      spinner.stop();
-
-      if (isJsonMode(opts)) { printJson(result); return; }
-      console.log(chalk.bold(`\n  Search: "${chalk.cyan(query as string)}" ${formatDuration(result.durationMs)}\n`));
-      formatResult(result.result);
-      console.log();
-    }),
-  );
-
   // ── perf (performance_scanner) ──
   const perf = program
     .command("perf")

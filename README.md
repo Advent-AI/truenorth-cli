@@ -3,7 +3,7 @@
   <p align="center">
     Crypto analysis tools in your terminal — powered by Discovery Agents.
     <br />
-    Technical analysis, derivatives, meme coins, KOL tracking, DeFi metrics, and 29 tools at your fingertips.
+    Technical analysis, derivatives, market data, DeFi metrics, and more at your fingertips.
   </p>
 </p>
 
@@ -11,7 +11,6 @@
   <img alt="Node.js" src="https://img.shields.io/badge/node-%3E%3D18-brightgreen">
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-3178c6">
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue.svg">
-  <img alt="Tools" src="https://img.shields.io/badge/tools-29-orange">
 </p>
 
 ---
@@ -19,12 +18,15 @@
 ## Features
 
 - **Technical Analysis** — RSI, MACD, Bollinger Bands, support/resistance, candlestick patterns with configurable timeframes
-- **Derivatives & Perps** — Funding rates, open interest, liquidation risk, smart money tracking on Hyperliquid
-- **Market Discovery** — Trending tokens, news & events, web search, token unlock schedules, performance scanner
-- **Meme Coin Suite** — Discovery, contract safety, market pulse, social momentum, and narrative analysis
-- **KOL Tracking** — Leaderboard, individual performance, and RAG-powered insight search
+- **Kline Charts** — Candlestick/OHLCV analysis across multiple timeframes
+- **Market Data** — ATH, market cap, supply, price, and fundamental metrics
+- **Derivatives** — Funding rates, open interest, liquidation heatmaps
+- **Liquidation Risk** — Calculate liquidation risk with entry price and direction
+- **Events & News** — Crypto news and announcements from 7 sources
 - **DeFi Analytics** — Protocol and chain metrics from DeFiLlama (TVL, fees, revenue, growth)
-- **Prediction Markets** — Polymarket probabilities and crowd-sourced forecasts
+- **Performance Scanner** — Rank tokens by relative strength vs benchmark
+- **Token Unlocks** — Upcoming vesting and unlock schedules
+- **NER Detection** — Extract token, chain, and protocol entities from text
 - **Agent-Friendly** — Every command supports `--json` for raw JSON output. Self-describing tool schemas via `tn tools --json`
 
 ## Installation
@@ -42,22 +44,21 @@ npm link
 ## Quick Start
 
 ```bash
-# List all 29 available tools
+# List all available tools
 tn tools
 
 # Technical analysis
 tn ta bitcoin
 tn ta ethereum --timeframe 1d
 
-# Market discovery
-tn trending
+# Market fundamentals
+tn info bitcoin
+
+# Derivatives
+tn deriv ethereum
+
+# News & events
 tn events solana --time-window 7d
-
-# Comprehensive token scan
-tn scan bitcoin
-
-# Meme coin safety check
-tn meme safety DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263 --network-id solana
 
 # Raw JSON for scripting / AI agents
 tn ta bitcoin --json
@@ -72,11 +73,11 @@ tn tools --json
 |---------|-------------|
 | `tn tools` | List all available tools |
 | `tn tools --verbose` | Show full descriptions + input schemas |
-| `tn tools --filter meme` | Filter by keyword |
+| `tn tools --filter <keyword>` | Filter by keyword |
 | `tn call <tool> [--args]` | Call any tool generically |
 
 ```bash
-tn tools                                        # Table view of all 29 tools
+tn tools                                        # Table view of all tools
 tn tools --verbose --filter derivatives         # Full schema for matching tools
 tn call technical_analysis --token-address bitcoin --timeframe 4h
 tn call events --query solana --time-window 7d  # Any tool, any args
@@ -90,94 +91,36 @@ tn call events --query solana --time-window 7d  # Any tool, any args
 |---------|-------------|
 | `tn ta <token>` | Technical indicators (RSI, MACD, support/resistance) |
 | `tn kline <token>` | Kline/candlestick chart analysis |
-| `tn deriv <token>` | Derivatives (funding rates, OI, liquidations) |
-| `tn scan <token>` | Comprehensive combo analysis |
-| `tn perf` | Token performance scanner |
 
 ```bash
 tn ta bitcoin                     # Default 4h timeframe
 tn ta ethereum --timeframe 1d     # Daily timeframe
 tn kline solana --timeframe 1h    # Hourly candlesticks
+```
+
+### Market Data
+
+| Command | Description |
+|---------|-------------|
+| `tn info <token>` | Basic market info (ATH, market cap, supply, price) |
+| `tn deriv <token>` | Derivatives (funding rates, OI, liquidations) |
+| `tn risk` | Liquidation risk calculator |
+
+```bash
+tn info bitcoin                   # Market cap, ATH, supply, fundamentals
 tn deriv bitcoin                  # Funding, OI, liquidation heatmap
-tn scan bitcoin                   # Full combo scan
-tn perf --top 20                  # Top 20 performers by relative strength
+tn risk --token bitcoin --dir long --price 95000 --liq 80000
 ```
 
-### Market & Events
+### Events & News
 
 | Command | Description |
 |---------|-------------|
-| `tn trending` | Trending tokens from CoinGecko |
-| `tn events <query>` | News & events from 7 sources |
-| `tn search <query>` | Web search for crypto topics |
-| `tn unlock <token>` | Token unlock schedule |
+| `tn events <query>` | Crypto news & events from 7 sources |
 
 ```bash
-tn trending                       # Top trending tokens
-tn trending --limit 30            # More results
-tn events bitcoin --time-window 7d  # Last 7 days of BTC news
-tn search "ETH merge impact"      # Web search
-tn unlock arbitrum                # Upcoming ARB unlocks
-```
-
-### Meme Tokens
-
-| Command | Description |
-|---------|-------------|
-| `tn meme discover` | Discover trending meme tokens |
-| `tn meme safety <addr>` | Contract security & rug pull check |
-| `tn meme pulse <addr>` | Market dynamics & holder distribution |
-| `tn meme social <addr>` | Community metrics & social presence |
-| `tn meme narrative <addr>` | Content themes & narrative analysis |
-
-```bash
-tn meme discover                  # Top meme coins by volume & social buzz
-tn meme discover --limit 50       # More results
-tn meme safety DezXAZ... --network-id solana   # Contract audit
-tn meme pulse DezXAZ...           # Market pulse & holder stats
-tn meme social DezXAZ...          # Twitter, Telegram, Discord metrics
-tn meme narrative DezXAZ...       # What's the story behind this token?
-```
-
-### Perpetuals (Hyperliquid)
-
-| Command | Description |
-|---------|-------------|
-| `tn perps positions` | View active Hyperliquid positions |
-| `tn perps smart-money <token>` | Smart money flow analysis |
-| `tn perps risk` | Liquidation risk calculator |
-| `tn perps playbook <addr>` | Trading playbook analysis |
-
-```bash
-tn perps positions --address 0x...   # Your open positions
-tn perps smart-money bitcoin         # What are whales doing?
-tn perps risk --token bitcoin --dir long --price 95000 --liq 80000
-tn perps playbook 0xabc...           # Analyze a trader's strategy
-```
-
-### Prediction Markets
-
-| Command | Description |
-|---------|-------------|
-| `tn polymarket [query]` | Polymarket prediction market insights |
-
-```bash
-tn polymarket                        # Browse markets
-tn polymarket --type crypto --token bitcoin  # Filter by crypto
-```
-
-### KOL Tracking
-
-| Command | Description |
-|---------|-------------|
-| `tn kol leaderboard` | Top KOLs ranked by performance |
-| `tn kol performance <handle>` | Individual KOL stats |
-| `tn kol search <query>` | Search KOL insights (RAG) |
-
-```bash
-tn kol leaderboard --limit 20       # Top 20 KOLs
-tn kol performance CryptoHayes      # Deep dive on a specific KOL
-tn kol search "solana ecosystem"    # What are KOLs saying about Solana?
+tn events bitcoin --time-window 7d   # Last 7 days of BTC news
+tn events solana --time-window 30d   # Last 30 days
 ```
 
 ### DeFi
@@ -190,6 +133,18 @@ tn kol search "solana ecosystem"    # What are KOLs saying about Solana?
 ```bash
 tn defi protocols --sort tvl_growth  # Fastest growing protocols
 tn defi chains --sort fees_growth    # Chains with rising fee revenue
+```
+
+### Performance & Unlocks
+
+| Command | Description |
+|---------|-------------|
+| `tn perf` | Token performance scanner |
+| `tn unlock <token>` | Token unlock schedule |
+
+```bash
+tn perf --top 20                  # Top 20 performers by relative strength
+tn unlock arbitrum                # Upcoming ARB unlocks
 ```
 
 ### Utility
@@ -210,9 +165,8 @@ By default, all commands display data using formatted tables, colored text, and 
 
 ```bash
 tn ta bitcoin --json                              # Full technical analysis as JSON
-tn trending --json | jq '.result.trending[].name'  # Pipe to jq
+tn info ethereum --json | jq '.result.market_data' # Pipe to jq
 tn tools --json | jq '.[].name'                    # List all tool names
-tn call events --query bitcoin --json              # Generic call with JSON output
 ```
 
 ## Configuration

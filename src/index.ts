@@ -5,15 +5,11 @@ import { loadConfig, saveConfig } from "./config.js";
 import { registerToolsCommand } from "./commands/tools.js";
 import { registerCallCommand } from "./commands/call.js";
 import { registerTechnicalCommand } from "./commands/technical.js";
+import { registerMarketInfoCommand } from "./commands/market-info.js";
 import { registerDerivativesCommand } from "./commands/derivatives.js";
 import { registerEventsCommand } from "./commands/events.js";
-import { registerTrendingCommand } from "./commands/trending.js";
-import { registerMemeCommand } from "./commands/meme.js";
 import { registerPerpsCommand } from "./commands/perps.js";
-import { registerPolymarketCommand } from "./commands/polymarket.js";
-import { registerKolCommand } from "./commands/kol.js";
 import { registerDefiCommand } from "./commands/defi.js";
-import { registerScanCommand } from "./commands/scan.js";
 import { registerSearchCommand } from "./commands/search.js";
 
 const program = new Command();
@@ -27,15 +23,11 @@ program
 registerToolsCommand(program);
 registerCallCommand(program);
 registerTechnicalCommand(program);
+registerMarketInfoCommand(program);
 registerDerivativesCommand(program);
 registerEventsCommand(program);
-registerTrendingCommand(program);
-registerMemeCommand(program);
 registerPerpsCommand(program);
-registerPolymarketCommand(program);
-registerKolCommand(program);
 registerDefiCommand(program);
-registerScanCommand(program);
 registerSearchCommand(program);
 
 // ── config command ───────────────────────────────────────────────────
