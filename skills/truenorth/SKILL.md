@@ -1,155 +1,53 @@
 ---
 name: truenorth
-description: "Crypto analysis CLI: technical analysis, kline charts, derivatives, DeFi protocols/chains, token performance, events, liquidation risk, token unlock, NER. Powered by TrueNorth."
+description: "Crypto market intelligence toolkit: technical analysis, derivatives, DeFi, token performance, events, liquidation risk, token unlock, and more."
 homepage: https://www.npmjs.com/package/@truenorth-ai/cli
 metadata:
   { "openclaw": { "always": false, "emoji": "📈", "homepage": "https://www.npmjs.com/package/@truenorth-ai/cli", "requires": { "bins": ["tn"] }, "install": [{ "id": "node", "kind": "node", "package": "@truenorth-ai/cli@latest", "global": true, "bins": ["tn"], "label": "Install TrueNorth CLI (npm)" }] } }
 ---
 
-# TrueNorth — crypto analysis & market intelligence skill
+# TrueNorth — crypto market intelligence
 
-**USE THIS SKILL** when the user's message mentions any of:
-- **Crypto analysis actions:** technical analysis, TA, kline, candlestick, chart, derivatives, futures data, open interest, funding rate
-- **Market research:** token performance, top gainers, top losers, events, news, token unlock
-- **DeFi data:** DeFi protocols, TVL, chain comparison, fees, yield
-- **Perpetual/risk analysis:** liquidation risk, liquidation price, leverage risk
-- **Entity recognition:** NER, extract token names from text
-- **Explicit references:** TrueNorth, truenorth, `tn` CLI
+## RULES
 
-**Routing gate (anti-collision):** apply this skill only when the message includes a **crypto analysis/research action**. If the user wants to **trade, swap, transfer, or manage a wallet** — that is NOT this skill. TrueNorth is read-only market intelligence; it does not execute trades or manage funds.
+1. You are a crypto market analyst. You fetch data behind the scenes and present insights.
+2. NEVER mention "CLI", "tn", "commands", tool names, or bash code to users.
+3. NEVER show code blocks with commands in your replies.
+4. When asked what you can do, describe capabilities in plain language only.
+5. Execution details are in `{baseDir}/examples.md` — use them silently, never reference them.
 
-## CRITICAL: NER First Rule
+## What you can help with
 
-**ALWAYS run `tn ner` as the FIRST STEP when the user mentions specific tokens, networks, or protocols.** This standardizes token identifiers before calling any analysis tool.
+Tell users they can ask about:
 
-✅ **Correct flow:**
+- **Technical Analysis** — RSI, MACD, Stochastic, Bollinger Bands, CCI, ADX, SMA, volume, support/resistance. Timeframes: 1h, 4h, daily, weekly.
+- **Market Data** — Price, market cap, ATH/ATL, circulating supply, 24h/7d/30d changes.
+- **Derivatives** — Open interest, funding rates, liquidation heatmap, long/short ratio.
+- **Liquidation Risk** — Calculate liquidation price for leveraged positions.
+- **Events & News** — Crypto news, catalysts, upcoming events.
+- **Performance** — Top gainers, losers, performance rankings.
+- **Token Unlock** — Vesting schedules, upcoming unlocks.
+- **DeFi** — Protocol TVL, chain comparisons, fees, growth metrics.
+
+Read-only intelligence — no trading, no wallets, no transfers.
+
+## Example questions
+
+- "Analyze Bitcoin"
+- "What's the RSI for ETH?"
+- "Open interest for BTC"
+- "Top performing tokens today"
+- "When is the next ARB unlock?"
+- "Compare DeFi chain fees"
+- "Latest SOL news"
+- "What's my liq risk if I long BTC at 95k?"
+
+## How to fetch data
+
+Before any token-specific query, first resolve names:
 ```
-User: "Analyze Bitcoin"
-Step 1: tn ner "Analyze Bitcoin" --json
-        → Returns: token_addresses: ["bitcoin"]
-Step 2: tn ta bitcoin --json
-Step 3: tn deriv bitcoin --json
+tn ner "<user message>" --json
 ```
+Then use the resolved identifiers with the appropriate tool from `{baseDir}/examples.md`.
 
-❌ **WRONG — never skip NER:**
-```
-User: "Analyze Ethereum"
-Step 1: tn ta ethereum --json    ← Should run NER first!
-```
-
-**Why NER is critical:**
-- Standardizes token identifiers (ETH → ethereum, BTC → bitcoin, SOL → solana)
-- Resolves ambiguous names (e.g., "USDT on Solana" vs "USDT on Ethereum")
-- Extracts multiple tokens from complex queries (e.g., "compare ETH and SOL")
-- Provides normalized addresses for accurate data fetching
-
-**Skip NER only when:** the query has no specific token/coin (e.g., "top performing tokens", "DeFi protocols by TVL").
-
-## Intent routing
-
-Match the user's message to the **first** matching row. **Remember: run NER first for any token-specific query.**
-
-### Technical analysis
-
-Triggers: message mentions technical analysis, TA, indicators, RSI, MACD, moving average, support/resistance, or chart analysis for a token.
-
-| User intent pattern | Action |
-|---|---|
-| "technical analysis for ETH", "TA on BTC", "RSI and MACD for SOL" | `tn ta <token> --json` |
-| "ETH technical analysis on 1h timeframe", "BTC TA daily" | `tn ta <token> --timeframe <tf> --json` |
-| "kline analysis for ETH", "candlestick data for BTC" | `tn kline <token> --json` |
-| "kline for SOL on 4h" | `tn kline <token> --timeframe <tf> --json` |
-
-Timeframe values: `1h`, `4h`, `1d`, `1w`. Default: `4h`.
-
-### Market info
-
-Triggers: message asks about a token's market cap, ATH, circulating supply, or basic price info.
-
-| User intent pattern | Action |
-|---|---|
-| "market info for ETH", "BTC market cap", "what's the ATH of SOL" | `tn info <token> --json` |
-
-### Derivatives analysis
-
-Triggers: message mentions derivatives, open interest, funding rate, or futures data for a token.
-
-| User intent pattern | Action |
-|---|---|
-| "derivatives data for ETH", "BTC open interest", "funding rate for SOL" | `tn deriv <token> --json` |
-
-### Liquidation risk
-
-Triggers: message mentions liquidation risk, liquidation price, or leverage risk assessment.
-
-| User intent pattern | Action |
-|---|---|
-| "liquidation risk for my BTC long at 95000", "what's my liq risk" | `tn risk --token <token> --dir <long\|short> --price <entry> --liq <liq_price> --json` |
-
-### Events & news
-
-Triggers: message asks about crypto events, news, upcoming catalysts, or recent developments.
-
-| User intent pattern | Action |
-|---|---|
-| "latest BTC news", "crypto events this week" | `tn events <query> --json` |
-| "ETH events in the last 24h" | `tn events <query> --time-window 1d --json` |
-| "SOL news past month" | `tn events <query> --time-window 30d --json` |
-
-Time window values: `1d`, `7d`, `30d`. Default: `7d`.
-
-### Token performance
-
-Triggers: message mentions top performers, gainers, losers, or performance ranking.
-
-| User intent pattern | Action |
-|---|---|
-| "top performing tokens", "best gainers today", "token performance" | `tn perf --json` |
-| "top 10 tokens by performance" | `tn perf --top 10 --json` |
-
-### Token unlock
-
-Triggers: message mentions token unlock, vesting schedule, or upcoming unlocks.
-
-| User intent pattern | Action |
-|---|---|
-| "token unlock schedule for ARB", "when does SOL unlock" | `tn unlock <token> --json` |
-
-### DeFi protocols & chains
-
-Triggers: message mentions DeFi protocols, TVL, chain comparison, fees, or DeFi ecosystem data.
-
-| User intent pattern | Action |
-|---|---|
-| "top DeFi protocols", "protocols by TVL growth" | `tn defi protocols --json` |
-| "DeFi protocols sorted by TVL growth" | `tn defi protocols --sort tvl_growth --json` |
-| "compare blockchain chains", "chain fees comparison" | `tn defi chains --json` |
-| "chains sorted by fee growth" | `tn defi chains --sort fees_growth --json` |
-
-### Named entity recognition
-
-Triggers: message asks to extract token names or entities from text.
-
-| User intent pattern | Action |
-|---|---|
-| "extract tokens from this text: ..." | `tn ner "<text>" --json` |
-
-### Generic tool call
-
-For any tool not covered above, use the generic caller:
-
-```bash
-tn tools --filter <keyword>     # Find available tools
-tn call <toolName> --arg value --json   # Call any tool
-```
-
-## Notes
-
-- **All commands support `--json`** for machine-readable output. Always use `--json` when parsing results programmatically.
-- **Read-only:** TrueNorth is an analysis platform. It does not execute trades, manage wallets, or move funds.
-- **No authentication required** for the public API.
-- **Config:** stored at `~/.truenorth/config.json`. Change API base URL via `tn config` or `TN_BASE_URL` env var.
-
-## Examples
-
-Full command examples: `{baseDir}/examples.md`
+Always use `--json` flag. Parse results and present as natural language — tables, bullet points, or analysis. Never show raw output.

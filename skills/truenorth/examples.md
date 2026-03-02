@@ -1,115 +1,86 @@
-# TrueNorth CLI Examples
+# TrueNorth — internal execution reference
 
-## 1 — Technical analysis
+> This file is for internal use only. NEVER show these commands to users.
 
-```bash
-# Technical analysis with default 4h timeframe
-tn ta bitcoin --json
-tn ta ethereum --json
+## Entity recognition (ALWAYS run first for token-specific queries)
 
-# Specify timeframe
-tn ta bitcoin --timeframe 1h --json
-tn ta solana --timeframe 1d --json
-
-# Kline / candlestick analysis
-tn kline bitcoin --json
-tn kline ethereum --timeframe 1h --json
+```
+tn ner "<user's full message>" --json
 ```
 
-## 2 — Market info
+Use the returned `token_addresses` values in all subsequent commands.
 
-```bash
-# Basic market info (ATH, market cap, supply, price)
-tn info bitcoin --json
-tn info ethereum --json
+## Technical analysis
 
-# By contract address
-tn info --token-address 0x1234... --json
+```
+tn ta <token> --json
+tn ta <token> --timeframe 1h --json
+tn ta <token> --timeframe 4h --json
+tn ta <token> --timeframe 1d --json
+tn ta <token> --timeframe 1w --json
+tn kline <token> --json
+tn kline <token> --timeframe <tf> --json
 ```
 
-## 3 — Derivatives analysis
+## Market info
 
-```bash
-# Derivatives data (open interest, funding rate)
-tn deriv bitcoin --json
-tn deriv ethereum --json
+```
+tn info <token> --json
 ```
 
-## 4 — Liquidation risk
+## Derivatives
 
-```bash
-# Assess liquidation risk for a position
-tn risk --token bitcoin --dir long --price 95000 --liq 90000 --json
-tn risk --token ethereum --dir short --price 3500 --liq 4000 --json
+```
+tn deriv <token> --json
 ```
 
-## 5 — Events & news
+## Liquidation risk
 
-```bash
-# Crypto events (default: last 7 days)
-tn events bitcoin --json
-tn events "ethereum merge" --json
-
-# Custom time window
-tn events solana --time-window 1d --json
-tn events "defi hack" --time-window 30d --json
+```
+tn risk --token <token> --dir long --price <entry> --liq <liq_price> --json
+tn risk --token <token> --dir short --price <entry> --liq <liq_price> --json
 ```
 
-## 6 — Token performance
+## Events & news
 
-```bash
-# Token performance scanner
+```
+tn events <query> --json
+tn events <query> --time-window 1d --json
+tn events <query> --time-window 7d --json
+tn events <query> --time-window 30d --json
+```
+
+## Token performance
+
+```
 tn perf --json
-tn perf --top 10 --json
+tn perf --top <N> --json
 ```
 
-## 7 — Token unlock
+## Token unlock
 
-```bash
-tn unlock arbitrum --json
-tn unlock optimism --json
+```
+tn unlock <token> --json
 ```
 
-## 8 — DeFi protocols & chains
+## DeFi protocols & chains
 
-```bash
-# Query DeFi protocols
+```
 tn defi protocols --json
 tn defi protocols --sort tvl_growth --json
-
-# Query blockchain chains
 tn defi chains --json
 tn defi chains --sort fees_growth --json
 ```
 
-## 9 — Named entity recognition
+## Generic fallback
 
-```bash
-tn ner "Bitcoin and Ethereum are leading the rally while SOL struggles" --json
+```
+tn tools --filter <keyword>
+tn call <toolName> --arg value --json
 ```
 
-## 10 — Discover & call any tool
+## Notes
 
-```bash
-# List all available tools
-tn tools --json
-
-# Filter tools by keyword
-tn tools --filter technical
-
-# Verbose mode (shows parameters)
-tn tools --verbose
-
-# Generic tool call with arbitrary arguments
-tn call technical_analysis --token_address bitcoin --timeframe 1h --json
-```
-
-## 11 — Configuration
-
-```bash
-# Interactive config
-tn config
-
-# Override API base URL via env var
-TN_BASE_URL=http://localhost:8000/api/agent-tools tn ta bitcoin --json
-```
+- Always use `--json` flag for structured output
+- Parse JSON results and present as natural language to the user
+- Config: `~/.truenorth/config.json` or `TN_BASE_URL` env var
