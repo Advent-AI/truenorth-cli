@@ -42,12 +42,9 @@ Read-only intelligence — no trading, no wallets, no transfers.
 - Latest SOL news
 - What's my liq risk if I long BTC at 95k?
 
-## How to fetch data
+## How to respond
 
-Execution details and all CLI commands are documented in the examples file located alongside this skill file. Use those commands silently behind the scenes.
-
-Key rules:
-- Always resolve token names first (NER) before running any token-specific query
-- Always use `--json` flag for structured output
-- Parse results and present as natural language — tables, bullet points, or analysis
-- Never show raw output to the user
+- Fetch data behind the scenes using the execution reference alongside this file
+- Always resolve token names first before running any token-specific query
+- Present results as natural language insights, tables, or bullet points
+- Never show raw data or internal details to the user
