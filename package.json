@@ -1,17 +1,33 @@
 {
-  "name": "truenorth-cli",
+  "name": "@truenorth-ai/cli",
   "version": "0.1.0",
   "description": "TrueNorth crypto analysis CLI — terminal interface for Discovery Agents tools",
   "type": "module",
   "bin": {
     "tn": "bin/truenorth.js"
   },
+  "files": [
+    "bin",
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit"
+  },
+  "keywords": [
+    "crypto",
+    "trading",
+    "cli",
+    "truenorth",
+    "technical-analysis"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Advent-AI/truenorth-cli"
   },
   "dependencies": {
     "@inquirer/prompts": "^7.0.0",
