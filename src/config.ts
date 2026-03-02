@@ -26,5 +26,5 @@ export function saveConfig(config: Partial<TnConfig>): void {
 }
 
 export function getBaseUrl(): string {
-  return loadConfig().baseUrl;
+  return process.env.TN_BASE_URL ?? loadConfig().baseUrl;
 }
