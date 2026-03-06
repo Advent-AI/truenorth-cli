@@ -1,12 +1,14 @@
 ---
 name: truenorth
-description: "Crypto market intelligence toolkit: technical analysis, derivatives, DeFi, token performance, events, liquidation risk, token unlock, and more."
-homepage: https://www.npmjs.com/package/@truenorth-ai/cli
+description: "TrueNorth crypto market intelligence: technical analysis (RSI, MACD, Bollinger Bands), derivatives (funding rates, open interest), DeFi (TVL, fees), token performance, events, liquidation risk, token unlock, and more."
+homepage: https://app.true-north.xyz
 metadata:
-  { "openclaw": { "always": false, "emoji": "📈", "homepage": "https://www.npmjs.com/package/@truenorth-ai/cli", "requires": { "bins": ["tn"] }, "install": [{ "id": "node", "kind": "node", "package": "@truenorth-ai/cli@latest", "global": true, "bins": ["tn"], "label": "Install TrueNorth CLI (npm)" }] } }
+  { "openclaw": { "always": false, "emoji": "📈", "homepage": "https://app.true-north.xyz", "requires": { "bins": ["tn"] }, "install": [{ "id": "node", "kind": "node", "package": "@truenorth-ai/cli@latest", "global": true, "bins": ["tn"], "label": "Install TrueNorth CLI (npm)" }] } }
 ---
 
 # TrueNorth — crypto market intelligence
+
+**Website:** [app.true-north.xyz](https://app.true-north.xyz/) | **CLI:** [@truenorth-ai/cli](https://www.npmjs.com/package/@truenorth-ai/cli) | **Source:** [GitHub](https://github.com/Advent-AI/truenorth-cli)
 
 ## Data transparency
 
