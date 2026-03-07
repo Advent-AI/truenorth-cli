@@ -8,6 +8,8 @@
 </p>
 
 <p align="center">
+  <a href="https://app.true-north.xyz"><img alt="Website" src="https://img.shields.io/badge/TrueNorth-app.true--north.xyz-8B5CF6"></a>
+  <a href="https://www.npmjs.com/package/@truenorth-ai/cli"><img alt="npm" src="https://img.shields.io/npm/v/@truenorth-ai/cli"></a>
   <img alt="Node.js" src="https://img.shields.io/badge/node-%3E%3D18-brightgreen">
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-3178c6">
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue.svg">
@@ -30,6 +32,26 @@
 - **Agent-Friendly** — Every command supports `--json` for raw JSON output. Self-describing tool schemas via `tn tools --json`
 
 ## Installation
+
+### npm (recommended)
+
+```bash
+npm i -g @truenorth-ai/cli
+```
+
+### Agent skills
+
+Install as an AI agent skill ([skills.sh](https://skills.sh/Advent-AI/truenorth-cli/truenorth) | [ClawHub](https://clawhub.ai/LJlkdskdjflsa/truenorth)):
+
+```bash
+# skills.sh (Claude Code, Cursor, Windsurf, Copilot, Codex, etc.)
+npx skills add Advent-AI/truenorth-cli@truenorth -g -y
+
+# ClawHub (OpenClaw)
+clawhub install truenorth
+```
+
+### From source
 
 ```bash
 git clone https://github.com/Advent-AI/truenorth-cli.git
