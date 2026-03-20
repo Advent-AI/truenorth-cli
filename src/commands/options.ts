@@ -300,19 +300,20 @@ function biasBadge(b: string): string {
 
 export function registerOptionsCommand(program: Command): void {
   const cmd = program
-    .command("options [token]")
-    .description("Options intelligence report — max pain, GEX, IV, skew, block trades, FOMC (bitcoin, ethereum, solana, ripple, tron, avalanche-2)")
-    .option("--token-address <addr>", "CoinGecko token ID (overrides positional)");
+    .command("options <token>")
+    .description("Options intelligence report for a token")
+    .option("--token-address <addr>", "Token address (overrides positional)");
 
   addJsonOption(cmd);
 
   cmd.action(
     wrapAction(async (token: unknown, _opts: unknown) => {
       const opts = _opts as Record<string, unknown>;
-      const tokenAddr = (opts.tokenAddress as string) ?? (token as string) ?? "bitcoin";
-      const args: Record<string, unknown> = { token_address: tokenAddr };
+      const args: Record<string, unknown> = {
+        token_address: (opts.tokenAddress as string) ?? (token as string),
+      };
 
-      const spinner = startSpinner(`Fetching options data for ${chalk.cyan(tokenAddr)}…`);
+      const spinner = startSpinner(`Fetching options data for ${chalk.cyan(args.token_address as string)}…`);
       const result = await executeTool("options_report", args);
       spinner.stop();
 
