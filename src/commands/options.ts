@@ -301,8 +301,8 @@ function biasBadge(b: string): string {
 export function registerOptionsCommand(program: Command): void {
   const cmd = program
     .command("options [token]")
-    .description("Options intelligence report — max pain, GEX, IV, skew, block trades, FOMC (BTC, ETH, SOL, XRP, TRX, AVAX)")
-    .option("--token-address <addr>", "Token address (overrides positional)");
+    .description("Options intelligence report — max pain, GEX, IV, skew, block trades, FOMC (bitcoin, ethereum, solana, ripple, tron, avalanche-2)")
+    .option("--token-address <addr>", "CoinGecko token ID (overrides positional)");
 
   addJsonOption(cmd);
 
