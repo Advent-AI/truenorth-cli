@@ -11,6 +11,7 @@ import { registerEventsCommand } from "./commands/events.js";
 import { registerPerpsCommand } from "./commands/perps.js";
 import { registerDefiCommand } from "./commands/defi.js";
 import { registerSearchCommand } from "./commands/search.js";
+import { registerOptionsCommand } from "./commands/options.js";
 
 const program = new Command();
 
@@ -29,6 +30,7 @@ registerEventsCommand(program);
 registerPerpsCommand(program);
 registerDefiCommand(program);
 registerSearchCommand(program);
+registerOptionsCommand(program);
 
 // ── config command ───────────────────────────────────────────────────
 program
