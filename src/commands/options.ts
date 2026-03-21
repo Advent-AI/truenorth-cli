@@ -204,7 +204,7 @@ function renderOptionsReport(result: Record<string, unknown>): void {
   // ── 9. Block Trades ─────────────────────────────────────────────
   const blocks = sections.block_trades;
   const blocksData = blocks.data as Record<string, unknown>;
-  section(9, "BLOCK TRADES");
+  section(9, "BLOCK TRADES (>$1M premium)");
   const blockCount = blocksData.count as number;
   const blockBias = blocksData.bias as string;
   console.log(`   Blocks: ${chalk.white(String(blockCount))} │ Bias: ${biasBadge(blockBias)}`);
@@ -214,10 +214,11 @@ function renderOptionsReport(result: Record<string, unknown>): void {
       chalk.dim(String(b.time || "").slice(11, 19)),
       (b.direction as string).toUpperCase() === "BUY" ? chalk.green("BUY") : chalk.red("SELL"),
       String(b.instrument),
-      formatNumber(b.notional_usd as number),
+      formatNumber(b.premium_usd as number),
+      formatNumber(b.underlying_notional_usd as number),
       chalk.white((b.iv as number).toFixed(1) + "%"),
     ]);
-    console.log(makeTable(["Time", "Side", "Instrument", "Notional", "IV"], rows));
+    console.log(makeTable(["Time", "Side", "Instrument", "Premium", "Notional", "IV"], rows));
   }
   insight(blocks.insight as Record<string, unknown>);
 
