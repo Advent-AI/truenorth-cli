@@ -5,3 +5,4 @@ dist/
 *.d.ts.map
 !bin/truenorth.js
 .DS_Store
+.idea
