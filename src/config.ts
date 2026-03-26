@@ -5,6 +5,18 @@ import { DEFAULT_CONFIG, type TnConfig } from "./types.js";
 
 const CONFIG_DIR = join(homedir(), ".truenorth");
 const CONFIG_FILE = join(CONFIG_DIR, "config.json");
+const AUTH_TOKEN_FILE = join(CONFIG_DIR, "auth_token");
+
+export function getAuthToken(): string | undefined {
+  try {
+    if (existsSync(AUTH_TOKEN_FILE)) {
+      return readFileSync(AUTH_TOKEN_FILE, "utf-8").trim();
+    }
+  } catch {
+    // ignore
+  }
+  return undefined;
+}
 
 export function loadConfig(): TnConfig {
   try {
