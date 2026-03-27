@@ -61,7 +61,7 @@ export interface TnConfig {
 }
 
 export const DEFAULT_CONFIG: TnConfig = {
-  baseUrl: "https://api.adventai.io/api/agent-tools",
+  baseUrl: "https://api.adventai.io/api/agent-tools/all-tools",
   defaultTimeframe: "4h",
   defaultLimit: 20,
 };
