@@ -17,12 +17,14 @@ const TIMEFRAME_ALIASES: Record<string, string> = {
 };
 
 function normalizeTimeframe(tf: string): string {
+  if (!tf || !tf.trim()) throw new Error("Timeframe is required");
   const lower = tf.toLowerCase();
   if (TIMEFRAME_ALIASES[lower]) return TIMEFRAME_ALIASES[lower];
   if (VALID_TIMEFRAMES.has(tf)) return tf;
+  const aliasList = Object.entries(TIMEFRAME_ALIASES).map(([k, v]) => `${k}→${v}`).join(", ");
   throw new Error(
     `Invalid timeframe "${tf}". Valid values: ${[...VALID_TIMEFRAMES].join(", ")}. ` +
-    `Aliases: daily→1d, hourly→1h, weekly→1w, monthly→1M`,
+    `Aliases: ${aliasList}`,
   );
 }
 
@@ -106,7 +108,8 @@ export function registerTechnicalCommand(program: Command): void {
   const klineCmd = program
     .command("kline <token>")
     .description("Kline/candlestick analysis for a token")
-    .option("--timeframe <tf>", "Timeframe (e.g. 1h, 4h, 1d)");
+    .option("--timeframe <tf>", "Timeframe (e.g. 1h, 4h, 1d)")
+    .option("--token-address <addr>", "Token address (overrides positional)");
 
   addJsonOption(klineCmd);
 
@@ -114,7 +117,7 @@ export function registerTechnicalCommand(program: Command): void {
     wrapAction(async (token: unknown, _opts: unknown) => {
       const opts = _opts as Record<string, unknown>;
       const config = loadConfig();
-      const tokenAddress = normalizeTokenAddress(token as string);
+      const tokenAddress = normalizeTokenAddress((opts.tokenAddress as string) ?? (token as string));
       const timeframe = normalizeTimeframe((opts.timeframe as string) ?? config.defaultTimeframe);
       await runAnalysis("kline_analysis", "Kline Analysis", tokenAddress, timeframe, opts);
     }),
