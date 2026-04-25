@@ -56,7 +56,31 @@ const SYMBOL_TO_COINGECKO_ID: Record<string, string> = {
 
 function normalizeTokenAddress(input: string): string {
   const upper = input.toUpperCase();
-  return SYMBOL_TO_COINGECKO_ID[upper] ?? input.toLowerCase();
+  // Only map known symbols; preserve original casing for everything else
+  // (e.g. checksummed EVM addresses must not be lowercased)
+  return SYMBOL_TO_COINGECKO_ID[upper] ?? input;
+}
+
+async function runAnalysis(
+  toolName: string,
+  label: string,
+  tokenAddress: string,
+  timeframe: string,
+  opts: Record<string, unknown>,
+): Promise<void> {
+  const args: Record<string, string> = { token_address: tokenAddress, timeframe };
+  const spinner = startSpinner(`${label} ${chalk.cyan(tokenAddress)}…`);
+  const result = await executeTool(toolName, args);
+  spinner.stop();
+
+  if (isJsonMode(opts)) {
+    printJson(result);
+    return;
+  }
+
+  console.log(chalk.bold(`\n  ${label}: ${chalk.cyan(tokenAddress)} ${formatDuration(result.durationMs)}\n`));
+  formatResult(result.result);
+  console.log();
 }
 
 export function registerTechnicalCommand(program: Command): void {
@@ -72,23 +96,9 @@ export function registerTechnicalCommand(program: Command): void {
     wrapAction(async (token: unknown, _opts: unknown) => {
       const opts = _opts as Record<string, unknown>;
       const config = loadConfig();
-      const args: Record<string, unknown> = {
-        token_address: normalizeTokenAddress((opts.tokenAddress as string) ?? (token as string)),
-        timeframe: normalizeTimeframe((opts.timeframe as string) ?? config.defaultTimeframe),
-      };
-
-      const spinner = startSpinner(`Analyzing ${chalk.cyan(args.token_address as string)}…`);
-      const result = await executeTool("technical_analysis", args);
-      spinner.stop();
-
-      if (isJsonMode(opts)) {
-        printJson(result);
-        return;
-      }
-
-      console.log(chalk.bold(`\n  Technical Analysis: ${chalk.cyan(args.token_address as string)} ${formatDuration(result.durationMs)}\n`));
-      formatResult(result.result);
-      console.log();
+      const tokenAddress = normalizeTokenAddress((opts.tokenAddress as string) ?? (token as string));
+      const timeframe = normalizeTimeframe((opts.timeframe as string) ?? config.defaultTimeframe);
+      await runAnalysis("technical_analysis", "Technical Analysis", tokenAddress, timeframe, opts);
     }),
   );
 
@@ -104,23 +114,9 @@ export function registerTechnicalCommand(program: Command): void {
     wrapAction(async (token: unknown, _opts: unknown) => {
       const opts = _opts as Record<string, unknown>;
       const config = loadConfig();
-      const args: Record<string, unknown> = {
-        token_address: normalizeTokenAddress(token as string),
-        timeframe: normalizeTimeframe((opts.timeframe as string) ?? config.defaultTimeframe),
-      };
-
-      const spinner = startSpinner(`Fetching kline for ${chalk.cyan(token as string)}…`);
-      const result = await executeTool("kline_analysis", args);
-      spinner.stop();
-
-      if (isJsonMode(opts)) {
-        printJson(result);
-        return;
-      }
-
-      console.log(chalk.bold(`\n  Kline Analysis: ${chalk.cyan(token as string)} ${formatDuration(result.durationMs)}\n`));
-      formatResult(result.result);
-      console.log();
+      const tokenAddress = normalizeTokenAddress(token as string);
+      const timeframe = normalizeTimeframe((opts.timeframe as string) ?? config.defaultTimeframe);
+      await runAnalysis("kline_analysis", "Kline Analysis", tokenAddress, timeframe, opts);
     }),
   );
 }
