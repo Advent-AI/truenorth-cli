@@ -1,9 +1,9 @@
 <p align="center">
   <h1 align="center">TrueNorth CLI</h1>
   <p align="center">
-    Crypto analysis tools in your terminal — powered by Discovery Agents.
+    Crypto market intelligence in your terminal.
     <br />
-    Technical analysis, derivatives, market data, DeFi metrics, and more at your fingertips.
+    Technical analysis, derivatives, options, DeFi metrics, and more — plus a window into TrueNorth's full equity, commodity, macro, meme, and KOL suite at <a href="https://app.true-north.xyz/">app.true-north.xyz</a>.
   </p>
 </p>
 
@@ -32,7 +32,7 @@
 - **Options Intelligence** — Max pain, GEX, IV term structure, risk reversal, block trades
 - **Agent-Friendly** — Every command supports `--json` for raw JSON output. Self-describing tool schemas via `tn tools --json`
 
-> **Looking for equity / commodity / macro data, meme analytics, KOL alpha, Polymarket insights, or sentiment shifts?** These capabilities live in the [TrueNorth web app](https://app.true-north.xyz/). The CLI advertises them in `tn tools` and prints a redirect when invoked — see [TrueNorth app capabilities](#truenorth-app-capabilities).
+> **Looking for stock / equity / commodity / macro data, Polymarket insights, KOL alpha, trending or sentiment shifts, or meme analytics?** These capabilities live in the [TrueNorth web app](https://app.true-north.xyz/). The CLI advertises them in `tn tools` and prints a redirect when invoked — see [TrueNorth app capabilities](#truenorth-app-capabilities).
 
 ## Installation
 
@@ -52,16 +52,6 @@ npx skills add Advent-AI/truenorth-cli@truenorth -g -y
 
 # ClawHub (OpenClaw)
 clawhub install truenorth
-```
-
-### From source
-
-```bash
-git clone https://github.com/Advent-AI/truenorth-cli.git
-cd truenorth-cli
-npm install
-npm run build
-npm link
 ```
 
 **Requires Node.js >= 18**
@@ -197,9 +187,33 @@ tn config                            # Interactive settings menu
 
 ## TrueNorth app capabilities
 
-The CLI is **crypto-only**. Equity, commodity, macro, meme, KOL, Polymarket, sentiment, and trending capabilities are gated to the [TrueNorth web app](https://app.true-north.xyz/). They appear in `tn tools` (tagged `app`) and any invocation — through a dedicated stub command or `tn call <tool_name>` — prints a redirect:
+The CLI is **crypto-only**. Stock, equity, commodity, macro, Polymarket, KOL, trending, sentiment, and meme capabilities are gated to the [TrueNorth web app](https://app.true-north.xyz/). They appear in `tn tools` (tagged `app`) and any invocation — through a dedicated stub command or `tn call <tool_name>` — prints a redirect.
 
-**Crypto-adjacent (have dedicated stub commands):**
+**Stock / equity / commodity / macro:**
+
+| Command | Capability |
+|---------|------------|
+| `tn call stock_price_snapshot` | US stock real-time snapshot |
+| `tn call stock_price_history` | US stock OHLCV history |
+| `tn call market_index_price` | SP500 / NASDAQ / VIX |
+| `tn call commodity_price` | Gold / oil / gas / metals |
+| `tn call analyst_estimates` | Analyst EPS, revenue, price targets |
+| `tn call company_facts` | FMP profile + SEC EDGAR |
+| `tn call financial_statements` | Income, balance sheet, cash flow |
+| `tn stock-dividends` | Historical stock dividends |
+| `tn stock-splits` | Historical stock splits |
+
+**Polymarket, KOL, trending & sentiment:**
+
+| Command | Capability |
+|---------|------------|
+| `tn polymarket` | Polymarket prediction insight |
+| `tn kol alpha` | Alpha tweet & influencer analysis |
+| `tn kol metrics` | Twitter user alpha track record |
+| `tn trending` | CoinGecko trending tokens |
+| `tn sentiment` | Tokens with sentiment shifts |
+
+**Meme analytics:**
 
 | Command | Capability |
 |---------|------------|
@@ -208,25 +222,6 @@ The CLI is **crypto-only**. Equity, commodity, macro, meme, KOL, Polymarket, sen
 | `tn meme safeguards` | Meme contract security checks |
 | `tn meme momentum` | Meme social momentum |
 | `tn meme narrative` | Meme token narrative |
-| `tn trending` | CoinGecko trending tokens |
-| `tn sentiment` | Tokens with sentiment shifts |
-| `tn polymarket` | Polymarket prediction insight |
-| `tn kol alpha` | Alpha tweet & influencer analysis |
-| `tn kol metrics` | Twitter user alpha track record |
-| `tn stock-dividends` | Historical stock dividends |
-| `tn stock-splits` | Historical stock splits |
-
-**Equity / commodity / macro (callable via `tn call <tool>` — all redirect):**
-
-| `tn call <tool>` | Capability |
-|------------------|------------|
-| `stock_price_snapshot` | US stock real-time snapshot |
-| `stock_price_history` | US stock OHLCV history |
-| `market_index_price` | SP500 / NASDAQ / VIX |
-| `commodity_price` | Gold / oil / gas / metals |
-| `analyst_estimates` | Analyst EPS, revenue, price targets |
-| `company_facts` | FMP profile + SEC EDGAR |
-| `financial_statements` | Income, balance sheet, cash flow |
 
 Subscribe at [app.true-north.xyz](https://app.true-north.xyz/) to unlock these tools.
 
@@ -267,16 +262,6 @@ tn call <tool_name> --arg1 value1 --arg2 value2 --json
 ```
 
 The `tn tools --json` response includes full JSON Schema for every tool's parameters — types, descriptions, required fields, defaults, and enums. No external documentation needed.
-
-## Development
-
-```bash
-npm install          # Install dependencies
-npm run build        # Compile TypeScript → dist/
-npm run dev          # Watch mode
-npm link             # Link globally as `tn`
-npm test             # Run tests (Vitest)
-```
 
 ## License
 
