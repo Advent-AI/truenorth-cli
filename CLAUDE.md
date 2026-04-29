@@ -46,9 +46,14 @@ src/
     ├── defi.ts        # `tn defi` (protocols, chains)
     ├── search.ts      # `tn perf`, `tn unlock`, `tn ner`
     ├── options.ts     # `tn options` (max pain / GEX / IV)
-    └── app-only.ts    # `tn meme/*`, `tn kol/*`, `tn trending`, `tn sentiment`,
-                       # `tn polymarket`, `tn stock-dividends`, `tn stock-splits`
-                       # — stub commands that print a TrueNorth-app CTA
+    └── app-only.ts    # APP_ONLY_TOOLS registry + stub commands.
+                       # Dedicated cmds: `tn meme/*`, `tn kol/*`, `tn trending`,
+                       # `tn sentiment`, `tn polymarket`, `tn stock-dividends`,
+                       # `tn stock-splits`. Equity/commodity/macro tools
+                       # (stock_price_*, market_index_price, commodity_price,
+                       # analyst_estimates, company_facts, financial_statements)
+                       # are intercepted only via `tn call <tool>` — no
+                       # dedicated cmd. All print a TrueNorth-app CTA.
 ```
 
 ## API

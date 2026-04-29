@@ -1,6 +1,6 @@
 {
   "name": "@truenorth-ai/cli",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "TrueNorth crypto analysis CLI — terminal interface for Discovery Agents tools",
   "type": "module",
   "bin": {

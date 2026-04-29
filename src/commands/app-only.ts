@@ -34,9 +34,19 @@ export const APP_ONLY_TOOLS: AppOnlyTool[] = [
   { name: "alpha_tweet_influencer_analysis", capability: "alpha tweets and KOL analysis",   description: "High signal-to-noise tweets and KOL ranking", category: "discovery" },
   { name: "twitter_user_alpha_metrics",      capability: "KOL alpha track record",          description: "Twitter user alpha metrics and track record", category: "discovery" },
 
-  // ── Finance gaps ──────────────────────────────────────────────────
-  { name: "stock_dividends", capability: "stock dividend history", description: "Historical stock dividends", category: "finance" },
-  { name: "stock_splits",    capability: "stock split history",    description: "Historical stock splits",    category: "finance" },
+  // ── Finance / equity / macro ──────────────────────────────────────
+  // All advertised but redirect to the TrueNorth app. Per the 2026-04-29
+  // sync, only crypto tools are public-usable; equity/commodity/macro are
+  // marketing surfaces that route users to subscribe at app.true-north.xyz.
+  { name: "stock_price_snapshot",  capability: "US stock price snapshot",   description: "Real-time price snapshot for a US stock",      category: "finance" },
+  { name: "stock_price_history",   capability: "US stock OHLCV history",    description: "OHLCV price history for a US stock",           category: "finance" },
+  { name: "market_index_price",    capability: "market index price",        description: "Latest price for a market index (SP500, VIX)", category: "finance" },
+  { name: "commodity_price",       capability: "commodity price history",   description: "OHLCV history for gold, oil, gas, metals",     category: "finance" },
+  { name: "analyst_estimates",     capability: "analyst estimates",         description: "EPS, revenue consensus, price targets",        category: "finance" },
+  { name: "company_facts",         capability: "company facts",             description: "FMP profile + SEC EDGAR for a US ticker",      category: "finance" },
+  { name: "financial_statements",  capability: "financial statements",      description: "Income, balance sheet, cash flow, key stats",  category: "finance" },
+  { name: "stock_dividends",       capability: "stock dividend history",    description: "Historical stock dividends",                   category: "finance" },
+  { name: "stock_splits",          capability: "stock split history",       description: "Historical stock splits",                      category: "finance" },
 ];
 
 const APP_ONLY_NAMES = new Set(APP_ONLY_TOOLS.map((t) => t.name));

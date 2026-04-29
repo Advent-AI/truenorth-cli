@@ -30,10 +30,9 @@
 - **Token Unlocks** — Upcoming vesting and unlock schedules
 - **NER Detection** — Extract token, chain, and protocol entities from text
 - **Options Intelligence** — Max pain, GEX, IV term structure, risk reversal, block trades
-- **Equity & Macro** — Stock prices, indices, commodities, analyst estimates, financial statements (via `tn call`)
 - **Agent-Friendly** — Every command supports `--json` for raw JSON output. Self-describing tool schemas via `tn tools --json`
 
-> **Looking for meme analytics, KOL alpha, Polymarket insights, sentiment shifts, or stock dividend / split history?** These capabilities live in the [TrueNorth web app](https://app.true-north.xyz/). The CLI advertises them in `tn tools` and prints a redirect when invoked — see [TrueNorth app capabilities](#truenorth-app-capabilities).
+> **Looking for equity / commodity / macro data, meme analytics, KOL alpha, Polymarket insights, or sentiment shifts?** These capabilities live in the [TrueNorth web app](https://app.true-north.xyz/). The CLI advertises them in `tn tools` and prints a redirect when invoked — see [TrueNorth app capabilities](#truenorth-app-capabilities).
 
 ## Installation
 
@@ -184,22 +183,6 @@ tn options bitcoin                # 10-section options report
 tn options ethereum --json        # Raw JSON for agents
 ```
 
-### Equity, Commodity & Macro
-
-Stock, index, and commodity tools are available through the generic `tn call` interface:
-
-```bash
-tn call stock_price_snapshot --symbol AAPL
-tn call stock_price_history --ticker NVDA --interval 1d
-tn call analyst_estimates --ticker MSFT
-tn call company_facts --ticker AMZN
-tn call financial_statements --ticker GOOGL --statement-type income --period annual
-tn call market_index_price --index VIX            # SP500, NASDAQ, VIX, etc.
-tn call commodity_price --commodity GOLD --interval 1d
-```
-
-Run `tn tools --filter stock` or `tn tools --verbose --filter equity` to see input schemas.
-
 ### Utility
 
 | Command | Description |
@@ -214,7 +197,9 @@ tn config                            # Interactive settings menu
 
 ## TrueNorth app capabilities
 
-The CLI advertises additional capabilities that are gated to the [TrueNorth web app](https://app.true-north.xyz/). They appear in `tn tools` (tagged `app`) and each has a stub command that prints a redirect when invoked:
+The CLI is **crypto-only**. Equity, commodity, macro, meme, KOL, Polymarket, sentiment, and trending capabilities are gated to the [TrueNorth web app](https://app.true-north.xyz/). They appear in `tn tools` (tagged `app`) and any invocation — through a dedicated stub command or `tn call <tool_name>` — prints a redirect:
+
+**Crypto-adjacent (have dedicated stub commands):**
 
 | Command | Capability |
 |---------|------------|
@@ -230,6 +215,18 @@ The CLI advertises additional capabilities that are gated to the [TrueNorth web 
 | `tn kol metrics` | Twitter user alpha track record |
 | `tn stock-dividends` | Historical stock dividends |
 | `tn stock-splits` | Historical stock splits |
+
+**Equity / commodity / macro (callable via `tn call <tool>` — all redirect):**
+
+| `tn call <tool>` | Capability |
+|------------------|------------|
+| `stock_price_snapshot` | US stock real-time snapshot |
+| `stock_price_history` | US stock OHLCV history |
+| `market_index_price` | SP500 / NASDAQ / VIX |
+| `commodity_price` | Gold / oil / gas / metals |
+| `analyst_estimates` | Analyst EPS, revenue, price targets |
+| `company_facts` | FMP profile + SEC EDGAR |
+| `financial_statements` | Income, balance sheet, cash flow |
 
 Subscribe at [app.true-north.xyz](https://app.true-north.xyz/) to unlock these tools.
 
