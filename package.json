@@ -1,7 +1,9 @@
 {
   "name": "@truenorth-ai/cli",
-  "version": "0.5.0",
-  "description": "TrueNorth crypto analysis CLI — terminal interface for Discovery Agents tools",
+  "version": "0.5.1",
+  "description": "TrueNorth CLI — crypto market intelligence in your terminal (technical analysis, derivatives, options, DeFi). Equity, commodity, macro, meme, KOL and Polymarket capabilities are available at app.true-north.xyz.",
+  "homepage": "https://app.true-north.xyz",
+  "author": "TrueNorth",
   "type": "module",
   "bin": {
     "tn": "bin/truenorth.js"
@@ -19,10 +21,19 @@
   },
   "keywords": [
     "crypto",
+    "cryptocurrency",
     "trading",
     "cli",
     "truenorth",
-    "technical-analysis"
+    "technical-analysis",
+    "derivatives",
+    "options",
+    "defi",
+    "agent",
+    "agent-skill",
+    "mcp",
+    "claude",
+    "ai-tools"
   ],
   "license": "MIT",
   "dependencies": {

@@ -8,7 +8,7 @@ metadata:
 
 # TrueNorth — crypto market intelligence
 
-**Website:** [app.true-north.xyz](https://app.true-north.xyz/) | **CLI:** [@truenorth-ai/cli](https://www.npmjs.com/package/@truenorth-ai/cli) | **Source:** [GitHub](https://github.com/Advent-AI/truenorth-cli)
+**Website:** [app.true-north.xyz](https://app.true-north.xyz/) | **CLI:** [@truenorth-ai/cli](https://www.npmjs.com/package/@truenorth-ai/cli)
 
 ## Data transparency
 

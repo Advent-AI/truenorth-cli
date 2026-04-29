@@ -19,7 +19,7 @@ const program = new Command();
 program
   .name("tn")
   .description("TrueNorth CLI — crypto analysis tools in your terminal")
-  .version("0.5.0");
+  .version("0.5.1");
 
 // Register all commands
 registerToolsCommand(program);
