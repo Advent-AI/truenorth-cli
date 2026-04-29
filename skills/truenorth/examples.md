@@ -87,14 +87,16 @@ tn options <token> --json
 Stock and macro tools are exposed via the generic caller. Use `tn tools --verbose --filter stock` for full schemas.
 
 ```bash
-tn call stock_price_snapshot --ticker <SYMBOL> --json
-tn call stock_price_history --ticker <SYMBOL> --interval 1d --limit 90 --json
+tn call stock_price_snapshot --symbol <SYMBOL> --json
+tn call stock_price_history --ticker <SYMBOL> --interval 1d --json
 tn call analyst_estimates --ticker <SYMBOL> --json
 tn call company_facts --ticker <SYMBOL> --json
-tn call financial_statements --ticker <SYMBOL> --statement income --period annual --json
-tn call market_index_price --symbol VIX --json
-tn call commodity_price --symbol GOLD --interval 1d --json
+tn call financial_statements --ticker <SYMBOL> --statement-type income --period annual --json
+tn call market_index_price --index VIX --json
+tn call commodity_price --commodity GOLD --interval 1d --json
 ```
+
+> **Param note:** required keys are `symbol` (snapshot), `ticker` (history / estimates / facts / statements), `index` (index price), and `commodity` (commodity price) — each tool uses a different identifier. Run `tn tools --verbose --filter stock` (or `--filter commodity` / `--filter index`) to see live schemas. Avoid `--limit N` on equity/commodity tools until the upstream service coerces integer args (currently returns a `'<' not supported` error).
 
 ## TrueNorth app capabilities (redirect)
 
