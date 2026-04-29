@@ -189,13 +189,13 @@ tn options ethereum --json        # Raw JSON for agents
 Stock, index, and commodity tools are available through the generic `tn call` interface:
 
 ```bash
-tn call stock_price_snapshot --ticker AAPL
-tn call stock_price_history --ticker NVDA --interval 1d --limit 90
+tn call stock_price_snapshot --symbol AAPL
+tn call stock_price_history --ticker NVDA --interval 1d
 tn call analyst_estimates --ticker MSFT
 tn call company_facts --ticker AMZN
-tn call financial_statements --ticker GOOGL --statement income --period annual
-tn call market_index_price --symbol VIX           # SP500, NASDAQ, VIX, etc.
-tn call commodity_price --symbol GOLD --interval 1d
+tn call financial_statements --ticker GOOGL --statement-type income --period annual
+tn call market_index_price --index VIX            # SP500, NASDAQ, VIX, etc.
+tn call commodity_price --commodity GOLD --interval 1d
 ```
 
 Run `tn tools --filter stock` or `tn tools --verbose --filter equity` to see input schemas.
