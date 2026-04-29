@@ -12,13 +12,14 @@ import { registerPerpsCommand } from "./commands/perps.js";
 import { registerDefiCommand } from "./commands/defi.js";
 import { registerSearchCommand } from "./commands/search.js";
 import { registerOptionsCommand } from "./commands/options.js";
+import { registerAppOnlyCommands } from "./commands/app-only.js";
 
 const program = new Command();
 
 program
   .name("tn")
   .description("TrueNorth CLI — crypto analysis tools in your terminal")
-  .version("0.1.0");
+  .version("0.4.0");
 
 // Register all commands
 registerToolsCommand(program);
@@ -31,6 +32,7 @@ registerPerpsCommand(program);
 registerDefiCommand(program);
 registerSearchCommand(program);
 registerOptionsCommand(program);
+registerAppOnlyCommands(program);
 
 // ── config command ───────────────────────────────────────────────────
 program

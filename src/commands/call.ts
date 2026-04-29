@@ -11,6 +11,7 @@ import {
   parseDynamicArgs,
   addJsonOption,
 } from "../utils.js";
+import { isAppOnly, printAppOnlyMessage } from "./app-only.js";
 
 export function registerCallCommand(program: Command): void {
   const cmd = program
@@ -26,6 +27,11 @@ export function registerCallCommand(program: Command): void {
       const opts = (command as Command).opts() as Record<string, unknown>;
       const rawArgs = (command as Command).args.slice(1); // skip tool name
       const dynamicArgs = parseDynamicArgs(rawArgs);
+
+      if (isAppOnly(toolName as string)) {
+        printAppOnlyMessage(toolName as string, isJsonMode(opts));
+        return;
+      }
 
       const spinner = startSpinner(`Calling ${chalk.cyan(toolName as string)}…`);
       const result = await executeTool(toolName as string, dynamicArgs);
