@@ -82,25 +82,11 @@ tn defi chains --sort fees_growth --json
 tn options <token> --json
 ```
 
-## Equity, index & commodity
-
-Stock and macro tools are exposed via the generic caller. Use `tn tools --verbose --filter stock` for full schemas.
-
-```bash
-tn call stock_price_snapshot --symbol <SYMBOL> --json
-tn call stock_price_history --ticker <SYMBOL> --interval 1d --json
-tn call analyst_estimates --ticker <SYMBOL> --json
-tn call company_facts --ticker <SYMBOL> --json
-tn call financial_statements --ticker <SYMBOL> --statement-type income --period annual --json
-tn call market_index_price --index VIX --json
-tn call commodity_price --commodity GOLD --interval 1d --json
-```
-
-> **Param note:** required keys are `symbol` (snapshot), `ticker` (history / estimates / facts / statements), `index` (index price), and `commodity` (commodity price) — each tool uses a different identifier. Run `tn tools --verbose --filter stock` (or `--filter commodity` / `--filter index`) to see live schemas. Avoid `--limit N` on equity/commodity tools until the upstream service coerces integer args (currently returns a `'<' not supported` error).
-
 ## TrueNorth app capabilities (redirect)
 
-These commands intentionally do **not** call the API. They emit a CTA pointing the user to https://app.true-north.xyz/. Use them when the user's request matches a meme / KOL / Polymarket / sentiment / dividend / split topic.
+These tools intentionally do **not** return live data. They emit a CTA pointing the user to https://app.true-north.xyz/. Use them when the user's request matches a meme / KOL / Polymarket / sentiment / equity / commodity / macro topic.
+
+**Crypto-adjacent (dedicated stub commands):**
 
 ```bash
 tn meme discovery --json
@@ -115,6 +101,18 @@ tn kol alpha --json
 tn kol metrics --json
 tn stock-dividends --json
 tn stock-splits --json
+```
+
+**Equity / commodity / macro (via `tn call <tool>` — all redirect):**
+
+```bash
+tn call stock_price_snapshot --json
+tn call stock_price_history --json
+tn call market_index_price --json
+tn call commodity_price --json
+tn call analyst_estimates --json
+tn call company_facts --json
+tn call financial_statements --json
 ```
 
 JSON shape:

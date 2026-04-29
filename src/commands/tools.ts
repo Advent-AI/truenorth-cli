@@ -25,8 +25,14 @@ export function registerToolsCommand(program: Command): void {
       const liveTools = await getToolList();
       spinner.stop();
 
+      // App-only registry takes precedence over live API listing — when a
+      // tool name appears in both (e.g. equity tools that the API exposes
+      // but we route to app.true-north.xyz instead), show only the
+      // app-only version so users see the CTA, not the bare schema.
       const appOnlyTools = APP_ONLY_TOOLS.map(appOnlyAsToolInfo);
-      const tools = [...liveTools, ...appOnlyTools];
+      const appOnlyNames = new Set(appOnlyTools.map((t) => t.name));
+      const filteredLive = liveTools.filter((t) => !appOnlyNames.has(t.name));
+      const tools = [...filteredLive, ...appOnlyTools];
 
       let filtered = tools;
       if (opts.filter) {
