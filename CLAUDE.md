@@ -30,25 +30,25 @@ npm test             # Run tests
 src/
 ├── index.ts           # Commander program, registers all commands
 ├── config.ts          # ~/.truenorth/ config (baseUrl, defaults)
-├── types.ts           # API response interfaces
+├── types.ts           # API response interfaces (ToolInfo carries appOnly?)
 ├── utils.ts           # Spinner, formatters, wrapAction, table helpers
 ├── api/
 │   ├── client.ts      # HTTP client (fetch → ApiResponse<T>)
 │   └── tools.ts       # getToolList(), executeTool()
 └── commands/
-    ├── tools.ts       # `tn tools` — list all
-    ├── call.ts        # `tn call <tool>` — generic caller
+    ├── tools.ts       # `tn tools` — merges live API + app-only registry
+    ├── call.ts        # `tn call <tool>` — generic caller, intercepts app-only
     ├── technical.ts   # `tn ta` / `tn kline`
+    ├── market-info.ts # `tn info`
     ├── derivatives.ts # `tn deriv`
     ├── events.ts      # `tn events`
-    ├── trending.ts    # `tn trending`
-    ├── meme.ts        # `tn meme` (5 subcommands)
-    ├── perps.ts       # `tn perps` (4 subcommands)
-    ├── polymarket.ts  # `tn polymarket`
-    ├── kol.ts         # `tn kol` (3 subcommands)
-    ├── defi.ts        # `tn defi` (2 subcommands)
-    ├── scan.ts        # `tn scan`
-    └── search.ts      # `tn search`, `tn perf`, `tn unlock`, `tn ner`
+    ├── perps.ts       # `tn risk` (liquidation risk)
+    ├── defi.ts        # `tn defi` (protocols, chains)
+    ├── search.ts      # `tn perf`, `tn unlock`, `tn ner`
+    ├── options.ts     # `tn options` (max pain / GEX / IV)
+    └── app-only.ts    # `tn meme/*`, `tn kol/*`, `tn trending`, `tn sentiment`,
+                       # `tn polymarket`, `tn stock-dividends`, `tn stock-splits`
+                       # — stub commands that print a TrueNorth-app CTA
 ```
 
 ## API
@@ -71,3 +71,13 @@ src/
 2. Export `registerXxxCommand(program: Command)`
 3. Import and call in `src/index.ts`
 4. Follow existing pattern: `addJsonOption()`, `wrapAction()`, spinner, `formatResult()`
+
+## App-only capabilities
+
+Tools that are advertised but not callable through the public API live in `src/commands/app-only.ts` (`APP_ONLY_TOOLS`). Adding a new app-only tool:
+
+1. Append an entry to `APP_ONLY_TOOLS` (`name`, `capability`, `description`, `category`).
+2. If you want a dedicated CLI command, add an `addLeaf(...)` call in `registerAppOnlyCommands()`.
+3. The tool automatically appears in `tn tools` (tagged `app`) and `tn call <name>` automatically prints the CTA. No other wiring needed.
+
+When the user asks for a capability we genuinely don't have yet, prefer adding it as app-only over silently failing — the CTA is the marketing surface mandated in the TN CLI sync (2026-04-29).

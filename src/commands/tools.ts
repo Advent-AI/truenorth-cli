@@ -3,6 +3,7 @@ import chalk from "chalk";
 import { getToolList } from "../api/tools.js";
 import type { ToolInfo } from "../types.js";
 import { startSpinner, makeTable, truncate, printJson, isJsonMode, wrapAction, addJsonOption } from "../utils.js";
+import { APP_ONLY_TOOLS, appOnlyAsToolInfo } from "./app-only.js";
 
 function getParamCount(tool: ToolInfo): number {
   return Object.keys(tool.inputSchema.properties ?? {}).length;
@@ -21,8 +22,11 @@ export function registerToolsCommand(program: Command): void {
     wrapAction(async (_opts: unknown) => {
       const opts = _opts as Record<string, unknown>;
       const spinner = startSpinner("Fetching tools…");
-      const tools = await getToolList();
+      const liveTools = await getToolList();
       spinner.stop();
+
+      const appOnlyTools = APP_ONLY_TOOLS.map(appOnlyAsToolInfo);
+      const tools = [...liveTools, ...appOnlyTools];
 
       let filtered = tools;
       if (opts.filter) {
@@ -42,11 +46,17 @@ export function registerToolsCommand(program: Command): void {
         return;
       }
 
-      console.log(chalk.bold(`\n  Available Tools (${filtered.length})\n`));
+      const usableCount = filtered.filter((t) => !t.appOnly).length;
+      const appOnlyCount = filtered.length - usableCount;
+      const header = appOnlyCount > 0
+        ? `Available Tools (${filtered.length}) — ${chalk.green(`${usableCount} via CLI`)}, ${chalk.cyan(`${appOnlyCount} in TrueNorth app`)}`
+        : `Available Tools (${filtered.length})`;
+      console.log(chalk.bold(`\n  ${header}\n`));
 
       if (opts.verbose) {
         for (const tool of filtered) {
-          console.log(chalk.cyan.bold(`  ${tool.name}`));
+          const badge = tool.appOnly ? chalk.cyan(" [app]") : "";
+          console.log(chalk.cyan.bold(`  ${tool.name}`) + badge);
           console.log(chalk.white(`    ${tool.description}`));
           const props = tool.inputSchema.properties ?? {};
           const required = tool.inputSchema.required ?? [];
@@ -70,11 +80,11 @@ export function registerToolsCommand(program: Command): void {
         }
       } else {
         const rows = filtered.map((t) => [
-          chalk.yellow(t.name),
+          t.appOnly ? chalk.dim(t.name) : chalk.yellow(t.name),
           truncate(t.description, 60),
-          chalk.dim(String(getParamCount(t))),
+          t.appOnly ? chalk.cyan("app") : chalk.dim(String(getParamCount(t))),
         ]);
-        console.log(makeTable(["Tool", "Description", "Params"], rows));
+        console.log(makeTable(["Tool", "Description", "Where"], rows));
       }
     }),
   );

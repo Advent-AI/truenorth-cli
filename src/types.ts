@@ -17,6 +17,8 @@ export interface ToolInfo {
   name: string;
   description: string;
   inputSchema: InputSchema;
+  appOnly?: boolean;
+  homepage?: string;
 }
 
 // Actual API shape: { data: { tools: [...], totalCount: N }, success: true, ... }

@@ -29,7 +29,11 @@
 - **Performance Scanner** — Rank tokens by relative strength vs benchmark
 - **Token Unlocks** — Upcoming vesting and unlock schedules
 - **NER Detection** — Extract token, chain, and protocol entities from text
+- **Options Intelligence** — Max pain, GEX, IV term structure, risk reversal, block trades
+- **Equity & Macro** — Stock prices, indices, commodities, analyst estimates, financial statements (via `tn call`)
 - **Agent-Friendly** — Every command supports `--json` for raw JSON output. Self-describing tool schemas via `tn tools --json`
+
+> **Looking for meme analytics, KOL alpha, Polymarket insights, sentiment shifts, or stock dividend / split history?** These capabilities live in the [TrueNorth web app](https://app.true-north.xyz/). The CLI advertises them in `tn tools` and prints a redirect when invoked — see [TrueNorth app capabilities](#truenorth-app-capabilities).
 
 ## Installation
 
@@ -169,6 +173,33 @@ tn perf --top 20                  # Top 20 performers by relative strength
 tn unlock arbitrum                # Upcoming ARB unlocks
 ```
 
+### Options Intelligence
+
+| Command | Description |
+|---------|-------------|
+| `tn options <token>` | Options intelligence (max pain, GEX, IV, walls, blocks) |
+
+```bash
+tn options bitcoin                # 10-section options report
+tn options ethereum --json        # Raw JSON for agents
+```
+
+### Equity, Commodity & Macro
+
+Stock, index, and commodity tools are available through the generic `tn call` interface:
+
+```bash
+tn call stock_price_snapshot --ticker AAPL
+tn call stock_price_history --ticker NVDA --interval 1d --limit 90
+tn call analyst_estimates --ticker MSFT
+tn call company_facts --ticker AMZN
+tn call financial_statements --ticker GOOGL --statement income --period annual
+tn call market_index_price --symbol VIX           # SP500, NASDAQ, VIX, etc.
+tn call commodity_price --symbol GOLD --interval 1d
+```
+
+Run `tn tools --filter stock` or `tn tools --verbose --filter equity` to see input schemas.
+
 ### Utility
 
 | Command | Description |
@@ -180,6 +211,27 @@ tn unlock arbitrum                # Upcoming ARB unlocks
 tn ner "Is SOL better than ETH?"     # Extract token/chain/protocol entities
 tn config                            # Interactive settings menu
 ```
+
+## TrueNorth app capabilities
+
+The CLI advertises additional capabilities that are gated to the [TrueNorth web app](https://app.true-north.xyz/). They appear in `tn tools` (tagged `app`) and each has a stub command that prints a redirect when invoked:
+
+| Command | Capability |
+|---------|------------|
+| `tn meme discovery` | Trending meme tokens |
+| `tn meme pulse` | Meme holder distribution and flow |
+| `tn meme safeguards` | Meme contract security checks |
+| `tn meme momentum` | Meme social momentum |
+| `tn meme narrative` | Meme token narrative |
+| `tn trending` | CoinGecko trending tokens |
+| `tn sentiment` | Tokens with sentiment shifts |
+| `tn polymarket` | Polymarket prediction insight |
+| `tn kol alpha` | Alpha tweet & influencer analysis |
+| `tn kol metrics` | Twitter user alpha track record |
+| `tn stock-dividends` | Historical stock dividends |
+| `tn stock-splits` | Historical stock splits |
+
+Subscribe at [app.true-north.xyz](https://app.true-north.xyz/) to unlock these tools.
 
 ## Output Format
 
