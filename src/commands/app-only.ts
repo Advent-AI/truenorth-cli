@@ -61,7 +61,8 @@ export function appOnlyAsToolInfo(t: AppOnlyTool): ToolInfo {
 
 export function printAppOnlyMessage(toolName: string, jsonMode = false): void {
   const tool = getAppOnlyTool(toolName);
-  const capability = tool?.capability ?? toolName.replace(/_/g, " ");
+  if (!tool) return; // unreachable: callers gate via isAppOnly()
+  const capability = tool.capability;
 
   if (jsonMode) {
     printJson({
