@@ -19,22 +19,13 @@ export interface AppOnlyTool {
   category: "meme" | "discovery" | "finance";
 }
 
+// Order matters: APP_ONLY_TOOLS is the source of truth for the order users
+// see in `tn tools` and downstream docs. Per the 2026-04-29 product call,
+// priority is Stock > Polymarket > other (KOL/trending/sentiment) > Meme,
+// and that ordering is preserved across this array, README, SKILL.md, and
+// examples.md.
 export const APP_ONLY_TOOLS: AppOnlyTool[] = [
-  // ── Meme analytics ────────────────────────────────────────────────
-  { name: "meme_discovery",          capability: "meme token discovery",     description: "Trending meme tokens",                 category: "meme" },
-  { name: "meme_market_pulse",       capability: "meme market pulse",        description: "Meme holder distribution and flow",    category: "meme" },
-  { name: "meme_project_safeguards", capability: "meme contract safeguards", description: "Meme contract security checks",        category: "meme" },
-  { name: "meme_social_momentum",    capability: "meme social momentum",     description: "Meme social sentiment and momentum",   category: "meme" },
-  { name: "meme_token_narrative",    capability: "meme narrative",           description: "Meme token narrative and story arc",   category: "meme" },
-
-  // ── Discovery / content ───────────────────────────────────────────
-  { name: "trending_discovery",              capability: "trending tokens",                 description: "CoinGecko trending tokens",                  category: "discovery" },
-  { name: "sentiment_shifts_discovery",      capability: "sentiment shifts",                description: "Tokens with notable sentiment shifts",       category: "discovery" },
-  { name: "polymarket_insight",              capability: "Polymarket prediction markets",   description: "Polymarket prediction market insight",       category: "discovery" },
-  { name: "alpha_tweet_influencer_analysis", capability: "alpha tweets and KOL analysis",   description: "High signal-to-noise tweets and KOL ranking", category: "discovery" },
-  { name: "twitter_user_alpha_metrics",      capability: "KOL alpha track record",          description: "Twitter user alpha metrics and track record", category: "discovery" },
-
-  // ── Finance / equity / macro ──────────────────────────────────────
+  // ── Stock / equity / commodity / macro (highest priority) ─────────
   // All advertised but redirect to the TrueNorth app. Per the 2026-04-29
   // sync, only crypto tools are public-usable; equity/commodity/macro are
   // marketing surfaces that route users to subscribe at app.true-north.xyz.
@@ -47,6 +38,22 @@ export const APP_ONLY_TOOLS: AppOnlyTool[] = [
   { name: "financial_statements",  capability: "financial statements",      description: "Income, balance sheet, cash flow, key stats",  category: "finance" },
   { name: "stock_dividends",       capability: "stock dividend history",    description: "Historical stock dividends",                   category: "finance" },
   { name: "stock_splits",          capability: "stock split history",       description: "Historical stock splits",                      category: "finance" },
+
+  // ── Polymarket ────────────────────────────────────────────────────
+  { name: "polymarket_insight",              capability: "Polymarket prediction markets",   description: "Polymarket prediction market insight",       category: "discovery" },
+
+  // ── Other discovery (KOL, trending, sentiment) ────────────────────
+  { name: "alpha_tweet_influencer_analysis", capability: "alpha tweets and KOL analysis",   description: "High signal-to-noise tweets and KOL ranking", category: "discovery" },
+  { name: "twitter_user_alpha_metrics",      capability: "KOL alpha track record",          description: "Twitter user alpha metrics and track record", category: "discovery" },
+  { name: "trending_discovery",              capability: "trending tokens",                 description: "CoinGecko trending tokens",                  category: "discovery" },
+  { name: "sentiment_shifts_discovery",      capability: "sentiment shifts",                description: "Tokens with notable sentiment shifts",       category: "discovery" },
+
+  // ── Meme analytics (lowest priority) ──────────────────────────────
+  { name: "meme_discovery",          capability: "meme token discovery",     description: "Trending meme tokens",                 category: "meme" },
+  { name: "meme_market_pulse",       capability: "meme market pulse",        description: "Meme holder distribution and flow",    category: "meme" },
+  { name: "meme_project_safeguards", capability: "meme contract safeguards", description: "Meme contract security checks",        category: "meme" },
+  { name: "meme_social_momentum",    capability: "meme social momentum",     description: "Meme social sentiment and momentum",   category: "meme" },
+  { name: "meme_token_narrative",    capability: "meme narrative",           description: "Meme token narrative and story arc",   category: "meme" },
 ];
 
 const APP_ONLY_NAMES = new Set(APP_ONLY_TOOLS.map((t) => t.name));

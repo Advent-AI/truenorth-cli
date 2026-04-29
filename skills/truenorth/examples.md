@@ -84,26 +84,9 @@ tn options <token> --json
 
 ## TrueNorth app capabilities (redirect)
 
-These tools intentionally do **not** return live data. They emit a CTA pointing the user to https://app.true-north.xyz/. Use them when the user's request matches a meme / KOL / Polymarket / sentiment / equity / commodity / macro topic.
+These tools intentionally do **not** return live data. They emit a CTA pointing the user to https://app.true-north.xyz/. Use them when the user's request matches a stock / equity / commodity / macro / Polymarket / KOL / sentiment / meme topic.
 
-**Crypto-adjacent (dedicated stub commands):**
-
-```bash
-tn meme discovery --json
-tn meme pulse --json
-tn meme safeguards --json
-tn meme momentum --json
-tn meme narrative --json
-tn trending --json
-tn sentiment --json
-tn polymarket --json
-tn kol alpha --json
-tn kol metrics --json
-tn stock-dividends --json
-tn stock-splits --json
-```
-
-**Equity / commodity / macro (via `tn call <tool>` — all redirect):**
+**Stock / equity / commodity / macro:**
 
 ```bash
 tn call stock_price_snapshot --json
@@ -113,6 +96,28 @@ tn call commodity_price --json
 tn call analyst_estimates --json
 tn call company_facts --json
 tn call financial_statements --json
+tn stock-dividends --json
+tn stock-splits --json
+```
+
+**Polymarket, KOL, trending & sentiment:**
+
+```bash
+tn polymarket --json
+tn kol alpha --json
+tn kol metrics --json
+tn trending --json
+tn sentiment --json
+```
+
+**Meme analytics:**
+
+```bash
+tn meme discovery --json
+tn meme pulse --json
+tn meme safeguards --json
+tn meme momentum --json
+tn meme narrative --json
 ```
 
 JSON shape:
