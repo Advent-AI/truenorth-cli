@@ -17,7 +17,7 @@ jobs:
 
     permissions:
       id-token: write
-      contents: write
+      contents: read
       pull-requests: write
       issues: write
 
@@ -27,11 +27,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure git identity
-        run: |
-          git config user.name "opencode-review[bot]"
-          git config user.email "opencode-review[bot]@users.noreply.github.com"
-
       - name: Run OpenCode with MiniMax
         uses: anomalyco/opencode/github@0cf0294787322664c6d668fa5ab0a9ce26796f78 # pinned for supply chain security
         env:
@@ -39,8 +34,13 @@ jobs:
           MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
         with:
           model: minimax/MiniMax-M2.7
+          agent: plan
           use_github_token: true
           prompt: |
+            IMPORTANT: This is a READ-ONLY review. Do NOT modify, commit, or push any files.
+            Do NOT use Edit/Write/Bash tools to make changes.
+            Your only output is inline review comments and a summary, posted via the GitHub API.
+
             Review this pull request with focus on code quality and readability.
 
             ## Review Checklist
