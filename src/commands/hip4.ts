@@ -25,11 +25,7 @@ import {
 // ── Shared input parsers ─────────────────────────────────────────────
 
 function parseOutcomeId(raw: unknown): number {
-  const id = parseInt(String(raw), 10);
-  if (isNaN(id) || id < 1) {
-    throw new Error("outcome-id must be a positive integer");
-  }
-  return id;
+  return parsePositiveInt(raw, "outcome-id");
 }
 
 function normalizeSide(s: unknown): Side {
@@ -38,6 +34,15 @@ function normalizeSide(s: unknown): Side {
     throw new Error(`--side must be "yes" or "no" (got "${String(s)}")`);
   }
   return v as Side;
+}
+
+function parsePositiveInt(raw: unknown, label: string): number {
+  const s = String(raw);
+  const n = parseInt(s, 10);
+  if (isNaN(n) || n < 1 || String(n) !== s.trim()) {
+    throw new Error(`${label} must be a positive integer (got "${s}")`);
+  }
+  return n;
 }
 
 // ── Book summary helper ──────────────────────────────────────────────
@@ -238,8 +243,13 @@ export function registerHip4Command(program: Command): void {
         return;
       }
 
-      const lvl = result.result as L2BookResponse;
-      const [bids, asks] = lvl.levels ?? [[], []];
+      const lvl = result.result as L2BookResponse | null;
+      if (!lvl?.levels) {
+        throw new Error(
+          `No orderbook for outcome #${id} ${side.toUpperCase()} (asset ${assetName(id, side)}). Is the outcome id correct?`,
+        );
+      }
+      const [bids, asks] = lvl.levels;
       console.log(
         chalk.bold(
           `\n  HIP-4 ${side.toUpperCase()} Book · outcome #${id} ${formatDuration(result.durationMs)}\n`,
@@ -280,7 +290,7 @@ export function registerHip4Command(program: Command): void {
       const opts = _opts as Record<string, unknown>;
       const id = parseOutcomeId(outcomeId);
       const side = normalizeSide(opts.side);
-      const limit = Math.max(1, parseInt(String(opts.limit ?? "25"), 10));
+      const limit = parsePositiveInt(opts.limit ?? "25", "--limit");
 
       const spinner = startSpinner(
         `Fetching ${side.toUpperCase()} trades for outcome #${id}…`,
@@ -299,7 +309,13 @@ export function registerHip4Command(program: Command): void {
         return;
       }
 
-      const list = (result.result as RecentTrade[]) ?? [];
+      const raw = result.result as RecentTrade[] | null;
+      if (raw === null) {
+        throw new Error(
+          `No trades for outcome #${id} ${side.toUpperCase()} (asset ${assetName(id, side)}). Is the outcome id correct?`,
+        );
+      }
+      const list = raw ?? [];
       console.log(
         chalk.bold(
           `\n  HIP-4 ${side.toUpperCase()} Trades · outcome #${id} ${formatDuration(result.durationMs)}\n`,
@@ -367,7 +383,13 @@ export function registerHip4Command(program: Command): void {
         return;
       }
 
-      const list = (result.result as Candle[]) ?? [];
+      const raw = result.result as Candle[] | null;
+      if (raw === null) {
+        throw new Error(
+          `No candles for outcome #${id} ${side.toUpperCase()} (asset ${assetName(id, side)}). Is the outcome id correct?`,
+        );
+      }
+      const list = raw ?? [];
       console.log(
         chalk.bold(
           `\n  HIP-4 ${side.toUpperCase()} Candles · outcome #${id} · ${interval} ${formatDuration(result.durationMs)}\n`,
