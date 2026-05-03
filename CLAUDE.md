@@ -46,6 +46,8 @@ src/
     ├── defi.ts        # `tn defi` (protocols, chains)
     ├── search.ts      # `tn perf`, `tn unlock`, `tn ner`
     ├── options.ts     # `tn options` (max pain / GEX / IV)
+    ├── hip4.ts        # `tn hip4 markets|quote|book|trades|candles` —
+    │                  #  direct HL Info API client (no auth)
     └── app-only.ts    # APP_ONLY_TOOLS registry + stub commands.
                        # Dedicated cmds: `tn meme/*`, `tn kol/*`, `tn trending`,
                        # `tn sentiment`, `tn polymarket`, `tn stock-dividends`,
@@ -61,6 +63,15 @@ src/
 - **Base URL**: `https://api.adventai.io/api/agent-tools`
 - `GET /` — list tools (returns `{ data: { tools: [...], totalCount } }`)
 - `POST /call` — call tool (body: `{ toolName, arguments }`, returns `{ data: { toolName, result, durationMs, isError } }`)
+
+### Direct external APIs (no Discovery Agents proxy)
+
+Some commands hit external public APIs directly (no auth, no discovery-agents
+hop). These wrap responses in the same `{ toolName, result, durationMs, isError }`
+envelope so the existing formatters work unchanged.
+
+- **`tn hip4 *`** — `src/api/hyperliquid.ts` posts to
+  `https://api.hyperliquid.xyz/info` for HIP-4 outcome markets (read-only).
 
 ## Conventions
 
