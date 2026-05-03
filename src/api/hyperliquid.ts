@@ -42,6 +42,8 @@ export function parseDescription(desc: string): Record<string, string> {
   const out: Record<string, string> = {};
   for (const part of desc.split("|")) {
     const idx = part.indexOf(":");
+    // Skip parts without a colon separator. HL's pipe-delimited spec is
+    // forgiving — malformed segments are ignored rather than rejected.
     if (idx === -1) continue;
     out[part.slice(0, idx)] = part.slice(idx + 1);
   }
@@ -65,9 +67,22 @@ export function parseExpiry(expiry: string | undefined): number | null {
 
 // ── Lookback string parser (1m, 4h, 1d → milliseconds) ────────────────
 
+/**
+ * Thrown by `parseLookback` for syntactically invalid input.
+ *
+ * Subclasses `SyntaxError` so callers can distinguish parse errors from
+ * runtime/network errors using `instanceof` rather than message matching.
+ */
+export class LookbackParseError extends SyntaxError {
+  constructor(input: string) {
+    super(`Invalid lookback: "${input}". Use 1m, 4h, 1d`);
+    this.name = "LookbackParseError";
+  }
+}
+
 export function parseLookback(s: string): number {
   const m = /^(\d+)([mhd])$/.exec(s.trim());
-  if (!m) throw new Error(`Invalid lookback: "${s}". Use 1m, 4h, 1d`);
+  if (!m) throw new LookbackParseError(s);
   const n = parseInt(m[1], 10);
   const unit = m[2];
   if (unit === "m") return n * 60_000;

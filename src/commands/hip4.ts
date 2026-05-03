@@ -315,7 +315,7 @@ export function registerHip4Command(program: Command): void {
           `No trades for outcome #${id} ${side.toUpperCase()} (asset ${assetName(id, side)}). Is the outcome id correct?`,
         );
       }
-      const list = raw ?? [];
+      const list = raw;
       console.log(
         chalk.bold(
           `\n  HIP-4 ${side.toUpperCase()} Trades · outcome #${id} ${formatDuration(result.durationMs)}\n`,
@@ -333,10 +333,9 @@ export function registerHip4Command(program: Command): void {
       });
       console.log(makeTable(["Time", "Side", "Price", "Size"], rows));
 
-      const totalSize = list.reduce((s, t) => s + parseFloat(t.sz), 0);
-      const buyVol = list
-        .filter((t) => t.side === "B")
-        .reduce((s, t) => s + parseFloat(t.sz), 0);
+      const sumSize = (acc: number, t: RecentTrade) => acc + parseFloat(t.sz);
+      const totalSize = list.reduce(sumSize, 0);
+      const buyVol = list.filter((t) => t.side === "B").reduce(sumSize, 0);
       const buyPct = totalSize > 0 ? (buyVol / totalSize) * 100 : 0;
       console.log(
         chalk.dim(
@@ -360,8 +359,10 @@ export function registerHip4Command(program: Command): void {
       const opts = _opts as Record<string, unknown>;
       const id = parseOutcomeId(outcomeId);
       const side = normalizeSide(opts.side);
-      const interval = String(opts.interval ?? "1m");
-      const lookbackMs = parseLookback(String(opts.lookback ?? "1h"));
+      const interval = (opts.interval as string | undefined) ?? "1m";
+      const lookbackMs = parseLookback(
+        (opts.lookback as string | undefined) ?? "1h",
+      );
 
       const endTime = Date.now();
       const startTime = endTime - lookbackMs;
@@ -389,7 +390,7 @@ export function registerHip4Command(program: Command): void {
           `No candles for outcome #${id} ${side.toUpperCase()} (asset ${assetName(id, side)}). Is the outcome id correct?`,
         );
       }
-      const list = raw ?? [];
+      const list = raw;
       console.log(
         chalk.bold(
           `\n  HIP-4 ${side.toUpperCase()} Candles · outcome #${id} · ${interval} ${formatDuration(result.durationMs)}\n`,

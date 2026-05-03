@@ -6,6 +6,7 @@ import {
   parseDescription,
   parseExpiry,
   parseLookback,
+  LookbackParseError,
 } from "../src/api/hyperliquid.js";
 
 describe("sideIndex", () => {
@@ -106,5 +107,16 @@ describe("parseLookback", () => {
     expect(() => parseLookback("foo")).toThrow(/Invalid lookback/);
     expect(() => parseLookback("1y")).toThrow(/Invalid lookback/);
     expect(() => parseLookback("h1")).toThrow(/Invalid lookback/);
+  });
+  it("throws typed LookbackParseError (distinguishable from network errors)", () => {
+    expect(() => parseLookback("1y")).toThrow(LookbackParseError);
+    expect(() => parseLookback("1y")).toThrow(SyntaxError);
+    try {
+      parseLookback("foo");
+      throw new Error("expected throw");
+    } catch (e) {
+      expect(e).toBeInstanceOf(LookbackParseError);
+      expect((e as LookbackParseError).name).toBe("LookbackParseError");
+    }
   });
 });
