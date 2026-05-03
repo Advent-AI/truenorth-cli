@@ -28,6 +28,7 @@
 - **DeFi Analytics** — Protocol and chain metrics from DeFiLlama (TVL, fees, revenue, growth)
 - **Performance Scanner** — Rank tokens by relative strength vs benchmark
 - **Token Unlocks** — Upcoming vesting and unlock schedules
+- **HIP-4 Outcome Markets** — Read-only quotes, books, trades, and candles for Hyperliquid prediction markets
 - **NER Detection** — Extract token, chain, and protocol entities from text
 - **Options Intelligence** — Max pain, GEX, IV term structure, risk reversal, block trades
 - **Agent-Friendly** — Every command supports `--json` for raw JSON output. Self-describing tool schemas via `tn tools --json`
@@ -171,6 +172,26 @@ tn unlock arbitrum                # Upcoming ARB unlocks
 ```bash
 tn options bitcoin                # 10-section options report
 tn options ethereum --json        # Raw JSON for agents
+```
+
+### Hyperliquid HIP-4 Outcome Markets
+
+Read-only access to [Hyperliquid HIP-4](https://hyperliquid.gitbook.io/hyperliquid-docs/hyperliquid-improvement-proposals-hips/hip-4-outcome-markets) outcome markets — direct from `api.hyperliquid.xyz/info`, no auth required.
+
+| Command | Description |
+|---------|-------------|
+| `tn hip4 markets` | List active outcome markets |
+| `tn hip4 quote <id>` | YES/NO mid prices and spreads |
+| `tn hip4 book <id> [--side yes\|no]` | Full L2 orderbook |
+| `tn hip4 trades <id> [--side yes\|no] [--limit N]` | Recent trades |
+| `tn hip4 candles <id> [--interval 1m] [--lookback 1h]` | OHLC candles |
+
+```bash
+tn hip4 markets                            # See what's live
+tn hip4 quote 1                            # YES/NO quote for outcome #1
+tn hip4 book 1 --side yes                  # Full L2 book
+tn hip4 trades 1 --limit 10                # Last 10 fills
+tn hip4 candles 1 --interval 5m --lookback 4h
 ```
 
 ### Utility

@@ -13,6 +13,7 @@ import { registerDefiCommand } from "./commands/defi.js";
 import { registerSearchCommand } from "./commands/search.js";
 import { registerOptionsCommand } from "./commands/options.js";
 import { registerAppOnlyCommands } from "./commands/app-only.js";
+import { registerHip4Command } from "./commands/hip4.js";
 
 const program = new Command();
 
@@ -33,6 +34,7 @@ registerDefiCommand(program);
 registerSearchCommand(program);
 registerOptionsCommand(program);
 registerAppOnlyCommands(program);
+registerHip4Command(program);
 
 // ── config command ───────────────────────────────────────────────────
 program
