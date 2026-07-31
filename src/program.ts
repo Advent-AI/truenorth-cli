@@ -7,7 +7,7 @@ export function createProgram(): Command {
   const program = new Command()
     .name("tn")
     .description("TrueNorth CLI — dynamically discover and call agent tools")
-    .version("0.6.0");
+    .version("1.0.0");
 
   registerToolsCommand(program);
   registerCallCommand(program);
