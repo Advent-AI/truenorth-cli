@@ -114,6 +114,10 @@ https://tn-api.truenorth.xyz/api/agent-tools
 Override it with `TN_BASE_URL` or place a `baseUrl` value in
 `~/.truenorth/config.json`.
 
+When upgrading from a pre-1.0 release, a persisted value matching the previous
+default (`https://api.adventai.io/api/agent-tools`) automatically resolves to
+the new default. Custom local or staging URLs are preserved.
+
 An authentication token can be stored in `~/.truenorth/auth_token`.
 
 ## Development

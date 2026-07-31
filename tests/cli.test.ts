@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { batchCallTools } from "../src/api/client.js";
+import { getBaseUrl, loadConfig } from "../src/config.js";
 import { createProgram } from "../src/program.js";
 import { DEFAULT_CONFIG } from "../src/types.js";
 import { parseDynamicArgs } from "../src/utils.js";
@@ -87,6 +91,54 @@ describe("API configuration", () => {
     expect(DEFAULT_CONFIG.baseUrl).toBe(
       "https://tn-api.truenorth.xyz/api/agent-tools",
     );
+  });
+
+  it("uses the default base URL when no config file exists", () => {
+    const directory = mkdtempSync(join(tmpdir(), "truenorth-cli-config-"));
+
+    try {
+      expect(loadConfig(join(directory, "missing.json")).baseUrl).toBe(
+        DEFAULT_CONFIG.baseUrl,
+      );
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  });
+
+  it("migrates the persisted pre-v1 default base URL", () => {
+    const directory = mkdtempSync(join(tmpdir(), "truenorth-cli-config-"));
+    const configFile = join(directory, "config.json");
+    writeFileSync(configFile, JSON.stringify({
+      baseUrl: "https://api.adventai.io/api/agent-tools",
+    }));
+
+    try {
+      expect(loadConfig(configFile).baseUrl).toBe(DEFAULT_CONFIG.baseUrl);
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  });
+
+  it("preserves an explicitly configured custom base URL", () => {
+    const directory = mkdtempSync(join(tmpdir(), "truenorth-cli-config-"));
+    const configFile = join(directory, "config.json");
+    writeFileSync(configFile, JSON.stringify({
+      baseUrl: "http://127.0.0.1:8000/api/agent-tools",
+    }));
+
+    try {
+      expect(loadConfig(configFile).baseUrl).toBe(
+        "http://127.0.0.1:8000/api/agent-tools",
+      );
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  });
+
+  it("prefers TN_BASE_URL over persisted configuration", () => {
+    process.env.TN_BASE_URL = "https://override.test/api/agent-tools";
+
+    expect(getBaseUrl()).toBe("https://override.test/api/agent-tools");
   });
 
   it("posts batch calls using the Python CLI wire shape", async () => {
