@@ -3,6 +3,12 @@ import ora, { type Ora } from "ora";
 import Table from "cli-table3";
 import type { Command } from "commander";
 
+// JSON values eligible for automatic coercion start with an object/array
+// delimiter, a boolean/null initial, a digit, or a minus sign.
+const AUTO_COERCE_PATTERN = /^[{[tfn\d-]/;
+// Keep automatically rendered tables readable in typical terminals.
+const MAX_TABLE_COLUMNS = 8;
+
 // ── Spinner ──────────────────────────────────────────────────────────
 export function startSpinner(text: string): Ora {
   return ora({ text, spinner: "dots" }).start();
@@ -154,7 +160,7 @@ export function parseDynamicArgs(argv: string[]): Record<string, unknown> {
 }
 
 function coerceArg(value: string): unknown {
-  if (!value || !/^[{[tfn\d-]/.test(value)) {
+  if (!value || !AUTO_COERCE_PATTERN.test(value)) {
     return value;
   }
   try {
@@ -185,7 +191,7 @@ export function formatResult(result: unknown): void {
     }
     // If array of objects, try table format
     if (typeof result[0] === "object" && result[0] !== null) {
-      const keys = Object.keys(result[0]).slice(0, 8); // max 8 cols
+      const keys = Object.keys(result[0]).slice(0, MAX_TABLE_COLUMNS);
       const rows = result.map((item) =>
         keys.map((k) => {
           const v = (item as Record<string, unknown>)[k];

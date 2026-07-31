@@ -105,6 +105,22 @@ describe("API configuration", () => {
     }
   });
 
+  it("warns and uses the default when the config file is invalid", () => {
+    const directory = mkdtempSync(join(tmpdir(), "truenorth-cli-config-"));
+    const configFile = join(directory, "config.json");
+    writeFileSync(configFile, "not JSON");
+    const warning = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+
+    try {
+      expect(loadConfig(configFile).baseUrl).toBe(DEFAULT_CONFIG.baseUrl);
+      expect(warning).toHaveBeenCalledWith(
+        expect.stringContaining("Could not read TrueNorth configuration"),
+      );
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  });
+
   it("migrates the persisted pre-v1 default base URL", () => {
     const directory = mkdtempSync(join(tmpdir(), "truenorth-cli-config-"));
     const configFile = join(directory, "config.json");

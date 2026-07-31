@@ -13,8 +13,8 @@ export function getAuthToken(): string | undefined {
     if (existsSync(AUTH_TOKEN_FILE)) {
       return readFileSync(AUTH_TOKEN_FILE, "utf-8").trim();
     }
-  } catch {
-    // ignore
+  } catch (error: unknown) {
+    warnReadFailure("authentication token", error);
   }
   return undefined;
 }
@@ -28,8 +28,8 @@ export function loadConfig(configFile = CONFIG_FILE): TnConfig {
         baseUrl: resolveBaseUrl(parsed.baseUrl),
       };
     }
-  } catch {
-    // Fall through to defaults
+  } catch (error: unknown) {
+    warnReadFailure("configuration", error);
   }
   return { ...DEFAULT_CONFIG };
 }
@@ -50,4 +50,9 @@ function resolveBaseUrl(configuredBaseUrl: unknown): string {
   }
 
   return configuredBaseUrl;
+}
+
+function warnReadFailure(source: string, error: unknown): void {
+  const message = error instanceof Error ? error.message : String(error);
+  console.warn(`Warning: Could not read TrueNorth ${source}: ${message}`);
 }

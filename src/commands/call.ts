@@ -24,8 +24,10 @@ export function registerCallCommand(program: Command): void {
 
   cmd.action(
     wrapAction(async (toolName: unknown, _opts: unknown, command: unknown) => {
-      const opts = (command as Command).opts() as Record<string, unknown>;
-      const rawArgs = (command as Command).args.slice(1); // skip tool name
+      const parsedCommand = command as Command;
+      const opts = parsedCommand.opts() as Record<string, unknown>;
+      // Commander keeps the required <tool> positional at args[0].
+      const [, ...rawArgs] = parsedCommand.args;
       if (opts.json && opts.result) {
         throw new Error("Use either --json (full envelope) or --result (payload only), not both.");
       }
