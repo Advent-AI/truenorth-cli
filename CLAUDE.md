@@ -2,94 +2,57 @@
 
 ## Overview
 
-Standalone npm CLI wrapping the Discovery Agents tool REST API. Provides terminal UX with interactive prompts, formatted tables, colored output, spinners, and `--json` raw output mode.
+Standalone npm CLI for the TrueNorth agent-tools REST API. It exposes only
+`tools`, `call`, and `batch`; every tool is discovered and invoked dynamically.
 
 ## Tech Stack
 
-- **TypeScript** (strict, ESM, NodeNext)
-- **Commander.js** — command routing
-- **@inquirer/prompts** — interactive prompts
-- **chalk** — colored terminal output
-- **cli-table3** — table formatting
-- **ora** — spinners
-- **Vitest** — testing
+- TypeScript (strict, ESM, NodeNext)
+- Commander.js
+- Chalk, cli-table3, and ora
+- Vitest
 
 ## Development Commands
 
 ```bash
-npm install          # Install dependencies
-npm run build        # Compile TypeScript → dist/
-npm run dev          # Watch mode
-npm link             # Link globally as `tn`
-npm test             # Run tests
+npm install
+npm run build
+npm test
 ```
 
 ## Architecture
 
-```
+```text
 src/
-├── index.ts           # Commander program, registers all commands
-├── config.ts          # ~/.truenorth/ config (baseUrl, defaults)
-├── types.ts           # API response interfaces (ToolInfo carries appOnly?)
-├── utils.ts           # Spinner, formatters, wrapAction, table helpers
+├── index.ts
+├── program.ts
+├── config.ts
+├── types.ts
+├── utils.ts
 ├── api/
-│   ├── client.ts      # HTTP client (fetch → ApiResponse<T>)
-│   └── tools.ts       # getToolList(), executeTool()
+│   ├── client.ts
+│   └── tools.ts
 └── commands/
-    ├── tools.ts       # `tn tools` — merges live API + app-only registry
-    ├── call.ts        # `tn call <tool>` — generic caller, intercepts app-only
-    ├── technical.ts   # `tn ta` / `tn kline`
-    ├── market-info.ts # `tn info`
-    ├── derivatives.ts # `tn deriv`
-    ├── events.ts      # `tn events`
-    ├── perps.ts       # `tn risk` (liquidation risk)
-    ├── defi.ts        # `tn defi` (protocols, chains)
-    ├── search.ts      # `tn perf`, `tn unlock`, `tn ner`
-    ├── options.ts     # `tn options` (max pain / GEX / IV)
-    ├── hip4.ts        # `tn hip4 markets` / `tn hip4 details <id>` —
-    │                  #  wraps tn-api hip4_markets + hip4_market_details
-    └── app-only.ts    # APP_ONLY_TOOLS registry + stub commands.
-                       # Dedicated cmds: `tn meme/*`, `tn kol/*`, `tn trending`,
-                       # `tn sentiment`, `tn polymarket`, `tn stock-dividends`,
-                       # `tn stock-splits`. Equity/commodity/macro tools
-                       # (stock_price_*, market_index_price, commodity_price,
-                       # analyst_estimates, company_facts, financial_statements)
-                       # are intercepted only via `tn call <tool>` — no
-                       # dedicated cmd. All print a TrueNorth-app CTA.
+    ├── tools.ts
+    ├── call.ts
+    └── batch.ts
 ```
 
 ## API
 
-- **Base URL**: `https://api.adventai.io/api/agent-tools`
-- `GET /` — list tools (returns `{ data: { tools: [...], totalCount } }`)
-- `POST /call` — call tool (body: `{ toolName, arguments }`, returns `{ data: { toolName, result, durationMs, isError } }`)
+- Default base URL: `https://tn-api.truenorth.xyz/api/agent-tools`
+- `GET /` lists tools and schemas.
+- `POST /call` calls one tool with `{toolName, arguments}`.
+- `POST /batch` calls several tools with `{calls: [{toolName, arguments}]}`.
 
-**Wrapper invariant:** Every command goes through `executeTool(toolName, args)`
-and renders the `{ toolName, result, durationMs, isError }` envelope. New
-functionality lands in `tn-mono/services/tn-api/src/tn_api/tools/` first and
-this CLI adds a thin shorthand wrapper after — never bypassing the gateway.
+Do not add tool-specific commands or local tool registries. New API tools must
+become available through `tools`, `call`, and `batch` without a CLI release.
 
 ## Conventions
 
-- Every command supports `--json` for raw JSON output
-- Use `wrapAction()` to wrap command handlers with error handling
-- Use `startSpinner()` / `spinner.stop()` around API calls
-- `formatResult()` auto-formats unknown API results (tables for arrays, key-value for objects)
-- Config stored in `~/.truenorth/config.json`
-
-## Adding a New Command
-
-1. Create `src/commands/<name>.ts`
-2. Export `registerXxxCommand(program: Command)`
-3. Import and call in `src/index.ts`
-4. Follow existing pattern: `addJsonOption()`, `wrapAction()`, spinner, `formatResult()`
-
-## App-only capabilities
-
-Tools that are advertised but not callable through the public API live in `src/commands/app-only.ts` (`APP_ONLY_TOOLS`). Adding a new app-only tool:
-
-1. Append an entry to `APP_ONLY_TOOLS` (`name`, `capability`, `description`, `category`).
-2. If you want a dedicated CLI command, add an `addLeaf(...)` call in `registerAppOnlyCommands()`.
-3. The tool automatically appears in `tn tools` (tagged `app`) and `tn call <name>` automatically prints the CTA. No other wiring needed.
-
-When the user asks for a capability we genuinely don't have yet, prefer adding it as app-only over silently failing — the CTA is the marketing surface mandated in the TN CLI sync (2026-04-29).
+- JSON modes must remain clean for piping.
+- Use `wrapAction()` for command error handling.
+- Use the shared API client for HTTP requests.
+- Keep the API envelopes compatible with the Python CLI.
+- Configuration is read from `TN_BASE_URL` or
+  `~/.truenorth/config.json`; there is no `config` command.

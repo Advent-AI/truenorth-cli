@@ -3,18 +3,14 @@ import chalk from "chalk";
 import { getToolList } from "../api/tools.js";
 import type { ToolInfo } from "../types.js";
 import { startSpinner, makeTable, truncate, printJson, isJsonMode, wrapAction, addJsonOption } from "../utils.js";
-import { APP_ONLY_TOOLS, appOnlyAsToolInfo } from "./app-only.js";
-
-function getParamCount(tool: ToolInfo): number {
-  return Object.keys(tool.inputSchema.properties ?? {}).length;
-}
 
 export function registerToolsCommand(program: Command): void {
   const cmd = program
     .command("tools")
     .description("List all available analysis tools")
-    .option("--verbose", "Show full descriptions and input schemas")
-    .option("--filter <keyword>", "Filter tools by name or description");
+    .option("--schema", "Include input and output schemas")
+    .option("--filter <keyword>", "Filter tools by name or description")
+    .option("--names <names>", "Comma-separated exact tool names to return");
 
   addJsonOption(cmd);
 
@@ -22,17 +18,18 @@ export function registerToolsCommand(program: Command): void {
     wrapAction(async (_opts: unknown) => {
       const opts = _opts as Record<string, unknown>;
       const spinner = startSpinner("Fetching tools…");
-      const liveTools = await getToolList();
+      let tools = await getToolList();
       spinner.stop();
 
-      // App-only registry takes precedence over live API listing — when a
-      // tool name appears in both (e.g. equity tools that the API exposes
-      // but we route to app.true-north.xyz instead), show only the
-      // app-only version so users see the CTA, not the bare schema.
-      const appOnlyTools = APP_ONLY_TOOLS.map(appOnlyAsToolInfo);
-      const appOnlyNames = new Set(appOnlyTools.map((t) => t.name));
-      const filteredLive = liveTools.filter((t) => !appOnlyNames.has(t.name));
-      const tools = [...filteredLive, ...appOnlyTools];
+      if (opts.names) {
+        const names = new Set(
+          String(opts.names)
+            .split(",")
+            .map((name) => name.trim().toLowerCase())
+            .filter(Boolean),
+        );
+        tools = tools.filter((tool) => names.has(tool.name.toLowerCase()));
+      }
 
       let filtered = tools;
       if (opts.filter) {
@@ -43,7 +40,17 @@ export function registerToolsCommand(program: Command): void {
       }
 
       if (isJsonMode(opts)) {
-        printJson(filtered);
+        const payload = filtered.map((tool) => (
+          opts.schema
+            ? {
+                name: tool.name,
+                description: tool.description,
+                input_schema: tool.inputSchema,
+                output_schema: tool.outputSchema ?? null,
+              }
+            : { name: tool.name, description: tool.description }
+        ));
+        printJson({ tools: payload });
         return;
       }
 
@@ -52,45 +59,29 @@ export function registerToolsCommand(program: Command): void {
         return;
       }
 
-      const usableCount = filtered.filter((t) => !t.appOnly).length;
-      const appOnlyCount = filtered.length - usableCount;
-      const header = appOnlyCount > 0
-        ? `Available Tools (${filtered.length}) — ${chalk.green(`${usableCount} via CLI`)}, ${chalk.cyan(`${appOnlyCount} in TrueNorth app`)}`
-        : `Available Tools (${filtered.length})`;
-      console.log(chalk.bold(`\n  ${header}\n`));
+      console.log(chalk.bold(`\n  Available Tools (${filtered.length})\n`));
 
-      if (opts.verbose) {
-        for (const tool of filtered) {
-          const badge = tool.appOnly ? chalk.cyan(" [app]") : "";
-          console.log(chalk.cyan.bold(`  ${tool.name}`) + badge);
-          console.log(chalk.white(`    ${tool.description}`));
+      if (opts.schema) {
+        const rows = filtered.map((tool) => {
           const props = tool.inputSchema.properties ?? {};
           const required = tool.inputSchema.required ?? [];
-          const propKeys = Object.keys(props);
-          if (propKeys.length > 0) {
-            console.log(chalk.dim("    Parameters:"));
-            for (const pName of propKeys) {
-              const p = props[pName];
-              const isReq = required.includes(pName);
-              const req = isReq ? chalk.red("*") : " ";
-              const def = p.default !== undefined ? chalk.dim(` (default: ${p.default})`) : "";
-              const enums = p.enum ? chalk.dim(` [${p.enum.join(", ")}]`) : "";
-              const pType = p.type ?? "any";
-              console.log(`      ${req} ${chalk.yellow(pName)} ${chalk.dim(pType)}${def}${enums}`);
-              if (p.description) {
-                console.log(`        ${chalk.dim(p.description)}`);
-              }
-            }
-          }
-          console.log();
-        }
+          const parameters = Object.entries(props).map(([name, info]) => {
+            const marker = required.includes(name) ? "*" : "";
+            return `${marker}${name}:${info.type ?? "any"}`;
+          });
+          return [
+            chalk.yellow(tool.name),
+            truncate(tool.description, 60),
+            parameters.join(", ") || "-",
+          ];
+        });
+        console.log(makeTable(["Tool", "Description", "Input"], rows));
       } else {
         const rows = filtered.map((t) => [
-          t.appOnly ? chalk.dim(t.name) : chalk.yellow(t.name),
-          truncate(t.description, 60),
-          t.appOnly ? chalk.cyan("app") : chalk.dim(String(getParamCount(t))),
+          chalk.yellow(t.name),
+          truncate(t.description, 80),
         ]);
-        console.log(makeTable(["Tool", "Description", "Where"], rows));
+        console.log(makeTable(["Tool", "Description"], rows));
       }
     }),
   );

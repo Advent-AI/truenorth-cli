@@ -122,22 +122,46 @@ export function kebabToSnake(str: string): string {
 // ── Parse dynamic args from remaining argv ───────────────────────────
 // Turns ["--token-address", "bitcoin", "--timeframe", "4h"] into
 // { token_address: "bitcoin", timeframe: "4h" }
-export function parseDynamicArgs(argv: string[]): Record<string, string> {
-  const args: Record<string, string> = {};
+export function parseDynamicArgs(argv: string[]): Record<string, unknown> {
+  const args: Record<string, unknown> = {};
   for (let i = 0; i < argv.length; i++) {
     const curr = argv[i];
     if (curr.startsWith("--")) {
-      const key = kebabToSnake(curr.slice(2));
+      const stripped = curr.slice(2);
+      const equalsIndex = stripped.indexOf("=");
+      if (equalsIndex >= 0) {
+        const key = kebabToSnake(stripped.slice(0, equalsIndex));
+        args[key] = coerceArg(stripped.slice(equalsIndex + 1));
+        continue;
+      }
+      const key = kebabToSnake(stripped);
       const next = argv[i + 1];
       if (next && !next.startsWith("--")) {
-        args[key] = next;
+        args[key] = coerceArg(next);
         i++;
       } else {
-        args[key] = "true";
+        args[key] = true;
+      }
+    } else {
+      const equalsIndex = curr.indexOf("=");
+      if (equalsIndex > 0) {
+        const key = kebabToSnake(curr.slice(0, equalsIndex));
+        args[key] = coerceArg(curr.slice(equalsIndex + 1));
       }
     }
   }
   return args;
+}
+
+function coerceArg(value: string): unknown {
+  if (!value || !/^[{[tfn\d-]/.test(value)) {
+    return value;
+  }
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
 }
 
 // ── Smart result formatter ───────────────────────────────────────────

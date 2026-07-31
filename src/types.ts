@@ -17,8 +17,7 @@ export interface ToolInfo {
   name: string;
   description: string;
   inputSchema: InputSchema;
-  appOnly?: boolean;
-  homepage?: string;
+  outputSchema?: Record<string, unknown> | null;
 }
 
 // Actual API shape: { data: { tools: [...], totalCount: N }, success: true, ... }
@@ -49,6 +48,21 @@ export interface CallToolApiResponse {
   failed: boolean;
 }
 
+export interface BatchToolCall {
+  toolName: string;
+  arguments: Record<string, unknown>;
+}
+
+export interface BatchToolApiResponse {
+  data: {
+    results: CallToolResult[];
+  };
+  success: boolean;
+  message: string | null;
+  code: string | null;
+  failed: boolean;
+}
+
 export interface ApiResponse<T> {
   ok: boolean;
   data?: T;
@@ -58,12 +72,8 @@ export interface ApiResponse<T> {
 
 export interface TnConfig {
   baseUrl: string;
-  defaultTimeframe: string;
-  defaultLimit: number;
 }
 
 export const DEFAULT_CONFIG: TnConfig = {
-  baseUrl: "https://api.adventai.io/api/agent-tools",
-  defaultTimeframe: "4h",
-  defaultLimit: 20,
+  baseUrl: "https://tn-api.truenorth.xyz/api/agent-tools",
 };
