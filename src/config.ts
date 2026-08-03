@@ -5,19 +5,7 @@ import { DEFAULT_CONFIG, type TnConfig } from "./types.js";
 
 const CONFIG_DIR = join(homedir(), ".truenorth");
 const CONFIG_FILE = join(CONFIG_DIR, "config.json");
-const AUTH_TOKEN_FILE = join(CONFIG_DIR, "auth_token");
 const LEGACY_DEFAULT_BASE_URL = "https://api.adventai.io/api/agent-tools";
-
-export function getAuthToken(): string | undefined {
-  try {
-    if (existsSync(AUTH_TOKEN_FILE)) {
-      return readFileSync(AUTH_TOKEN_FILE, "utf-8").trim();
-    }
-  } catch (error: unknown) {
-    warnReadFailure("authentication token", error);
-  }
-  return undefined;
-}
 
 export function loadConfig(configFile = CONFIG_FILE): TnConfig {
   try {

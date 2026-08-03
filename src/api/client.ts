@@ -1,4 +1,4 @@
-import { getBaseUrl, getAuthToken } from "../config.js";
+import { getBaseUrl } from "../config.js";
 import type {
   ApiResponse,
   BatchToolApiResponse,
@@ -9,15 +9,10 @@ import type {
 
 async function request<T>(url: string, init?: RequestInit): Promise<ApiResponse<T>> {
   try {
-    const authToken = getAuthToken();
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
       ...init?.headers as Record<string, string>,
     };
-
-    if (authToken) {
-      headers["Authorization"] = authToken;
-    }
 
     const res = await fetch(url, {
       ...init,

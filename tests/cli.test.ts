@@ -179,6 +179,7 @@ describe("API configuration", () => {
       "https://example.test/api/agent-tools/batch",
       expect.objectContaining({
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           calls: [
             { toolName: "example_tool", arguments: { limit: 10 } },
