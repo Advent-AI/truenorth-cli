@@ -1,17 +1,18 @@
-import { getBaseUrl, getAuthToken } from "../config.js";
-import type { ApiResponse, ListToolsApiResponse, CallToolApiResponse } from "../types.js";
+import { getBaseUrl } from "../config.js";
+import type {
+  ApiResponse,
+  BatchToolApiResponse,
+  BatchToolCall,
+  CallToolApiResponse,
+  ListToolsApiResponse,
+} from "../types.js";
 
 async function request<T>(url: string, init?: RequestInit): Promise<ApiResponse<T>> {
   try {
-    const authToken = getAuthToken();
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
       ...init?.headers as Record<string, string>,
     };
-
-    if (authToken) {
-      headers["Authorization"] = authToken;
-    }
 
     const res = await fetch(url, {
       ...init,
@@ -44,5 +45,15 @@ export async function callTool(
   return request<CallToolApiResponse>(`${baseUrl}/call`, {
     method: "POST",
     body: JSON.stringify({ toolName, arguments: args }),
+  });
+}
+
+export async function batchCallTools(
+  calls: BatchToolCall[],
+): Promise<ApiResponse<BatchToolApiResponse>> {
+  const baseUrl = getBaseUrl();
+  return request<BatchToolApiResponse>(`${baseUrl}/batch`, {
+    method: "POST",
+    body: JSON.stringify({ calls }),
   });
 }
