@@ -1,9 +1,9 @@
 ---
 name: truenorth
 description: "Discover and call TrueNorth agent tools dynamically through the tn CLI."
-homepage: https://app.true-north.xyz
+homepage: https://truenorth.xyz/
 metadata:
-  { "openclaw": { "always": false, "emoji": "📈", "homepage": "https://app.true-north.xyz", "requires": { "bins": ["tn"] }, "install": [{ "id": "node", "kind": "node", "package": "@truenorth-ai/cli@latest", "global": true, "bins": ["tn"], "label": "Install TrueNorth CLI (npm)" }] } }
+  { "openclaw": { "always": false, "emoji": "📈", "homepage": "https://truenorth.xyz/", "requires": { "bins": ["tn"] }, "install": [{ "id": "node", "kind": "node", "package": "@truenorth-ai/cli@latest", "global": true, "bins": ["tn"], "label": "Install TrueNorth CLI (npm)" }] } }
 ---
 
 # TrueNorth agent tools
