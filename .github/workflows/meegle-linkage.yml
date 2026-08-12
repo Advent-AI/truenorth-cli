@@ -1,0 +1,60 @@
+name: Meegle linkage
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+  pull_request_target:
+    types: [opened, edited, reopened, synchronize, closed]
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Credential smoke or release replay
+        required: true
+        type: choice
+        default: credential-smoke
+        options: [credential-smoke, release-replay]
+      tag:
+        description: Release tag for replay
+        required: false
+        type: string
+      from-tag:
+        description: Previous release tag for replay
+        required: false
+        type: string
+
+jobs:
+  description-checks:
+    if: github.event_name == 'pull_request'
+    uses: Advent-AI/tnctl/.github/workflows/pr-description-check.yml@main
+
+  pr-sync:
+    if: github.event_name == 'pull_request_target' && vars.MEEGLE_SYNC_ENABLED == 'true'
+    uses: Advent-AI/tnctl/.github/workflows/meegle-pr-sync.yml@main
+    secrets:
+      MEEGLE_PLUGIN_ID: ${{ secrets.MEEGLE_PLUGIN_ID }}
+      MEEGLE_PLUGIN_SECRET: ${{ secrets.MEEGLE_PLUGIN_SECRET }}
+      MEEGLE_USER_KEY: ${{ secrets.MEEGLE_USER_KEY }}
+
+  release-sync:
+    if: >-
+      vars.MEEGLE_SYNC_ENABLED == 'true' &&
+      (github.event_name == 'push' ||
+      (github.event_name == 'workflow_dispatch' && inputs.mode == 'release-replay'))
+    uses: Advent-AI/tnctl/.github/workflows/meegle-release-sync.yml@main
+    with:
+      repository: ${{ github.repository }}
+      tag: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+      from-tag: ${{ github.event_name == 'workflow_dispatch' && inputs.from-tag || '' }}
+    secrets:
+      MEEGLE_PLUGIN_ID: ${{ secrets.MEEGLE_PLUGIN_ID }}
+      MEEGLE_PLUGIN_SECRET: ${{ secrets.MEEGLE_PLUGIN_SECRET }}
+      MEEGLE_USER_KEY: ${{ secrets.MEEGLE_USER_KEY }}
+
+  credential-smoke:
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'credential-smoke'
+    uses: Advent-AI/tnctl/.github/workflows/meegle-credential-smoke.yml@main
+    secrets:
+      MEEGLE_PLUGIN_ID: ${{ secrets.MEEGLE_PLUGIN_ID }}
+      MEEGLE_PLUGIN_SECRET: ${{ secrets.MEEGLE_PLUGIN_SECRET }}
+      MEEGLE_USER_KEY: ${{ secrets.MEEGLE_USER_KEY }}
