@@ -45,7 +45,7 @@ jobs:
     with:
       repository: ${{ github.repository }}
       tag: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
-      from-tag: ${{ github.event_name == 'workflow_dispatch' && inputs.from-tag || '' }}
+      from-tag: ${{ github.event_name == 'workflow_dispatch' && inputs['from-tag'] || '' }}
     secrets:
       MEEGLE_PLUGIN_ID: ${{ secrets.MEEGLE_PLUGIN_ID }}
       MEEGLE_PLUGIN_SECRET: ${{ secrets.MEEGLE_PLUGIN_SECRET }}
