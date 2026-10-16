@@ -1,6 +1,6 @@
 {
   "name": "@truenorth-ai/cli",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "TrueNorth CLI for dynamically discovering and calling TrueNorth agent tools.",
   "homepage": "https://truenorth.xyz/",
   "author": "TrueNorth",

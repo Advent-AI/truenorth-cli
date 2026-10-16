@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -8,16 +8,23 @@ import { createProgram } from "../src/program.js";
 import { DEFAULT_CONFIG } from "../src/types.js";
 import { parseDynamicArgs } from "../src/utils.js";
 
+const TEST_API_KEY = `ak_${"0".repeat(32)}`;
+
+beforeEach(() => {
+  process.env.TN_API_KEY = TEST_API_KEY;
+});
+
 afterEach(() => {
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
   delete process.env.TN_BASE_URL;
+  delete process.env.TN_API_KEY;
 });
 
 describe("command surface", () => {
-  it("contains only tools, call, and batch", () => {
+  it("contains only tools, call, batch, login, and logout", () => {
     const commands = createProgram().commands.map((command) => command.name());
-    expect(commands).toEqual(["tools", "call", "batch"]);
+    expect(commands).toEqual(["tools", "call", "batch", "login", "logout"]);
   });
 });
 
@@ -179,7 +186,10 @@ describe("API configuration", () => {
       "https://example.test/api/agent-tools/batch",
       expect.objectContaining({
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${TEST_API_KEY}`,
+        },
         body: JSON.stringify({
           calls: [
             { toolName: "example_tool", arguments: { limit: 10 } },

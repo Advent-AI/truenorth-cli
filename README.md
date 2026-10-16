@@ -12,9 +12,31 @@ npm i -g @truenorth-ai/cli
 
 Requires Node.js 18 or newer.
 
+## API key
+
+Every command needs a TrueNorth API key. Create one on the Credits page of the
+TrueNorth app: <https://app.truenorth.xyz/credits>. The first command you run
+in a terminal asks for the key, checks it with the API, and saves it:
+
+```text
+$ tn tools
+TrueNorth needs an API key. Create one at https://app.truenorth.xyz/credits and paste it below.
+API key (input hidden):
+API key verified and saved to /Users/you/.truenorth/config.json.
+```
+
+- `tn login` replaces the saved key, checking the new one first.
+- `tn logout` removes the saved key.
+- `TN_API_KEY` overrides the saved key. Use it in scripts, CI, and agents:
+  without a terminal, a missing key is an error instead of a prompt.
+
+The key is saved in `~/.truenorth/config.json`, readable only by you, and sent
+with every request as `Authorization: Bearer <key>`. When TrueNorth refuses it
+(unknown or expired), the command says so and how to replace it.
+
 ## Commands
 
-The CLI exposes exactly three commands:
+Besides `login` and `logout`, the CLI exposes exactly three commands:
 
 ```bash
 # Discover tool names and descriptions
@@ -112,7 +134,8 @@ https://tn-api.truenorth.xyz/api/agent-tools
 ```
 
 Override it with `TN_BASE_URL` or place a `baseUrl` value in
-`~/.truenorth/config.json`.
+`~/.truenorth/config.json`. The same file holds the `apiKey` that `tn login`
+saves; `TN_API_KEY` overrides it.
 
 When upgrading from a pre-1.0 release, a persisted value matching the previous
 default (`https://api.adventai.io/api/agent-tools`) automatically resolves to
