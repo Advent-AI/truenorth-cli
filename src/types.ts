@@ -72,6 +72,7 @@ export interface ApiResponse<T> {
 
 export interface TnConfig {
   baseUrl: string;
+  apiKey?: string;
 }
 
 export const DEFAULT_CONFIG: TnConfig = {

@@ -23,4 +23,12 @@ The CLI is a thin wrapper around the agent-tools API. Never invent tool names or
 arguments. Refresh discovery when a call reports an unknown tool or input
 validation error.
 
+## API key
+
+Every `tn` command needs a TrueNorth API key, from `TN_API_KEY` or the key that
+`tn login` saved. If a command fails with `No TrueNorth API key` or says
+TrueNorth refused the key, ask the user to run `tn login` in their own terminal
+(or to set `TN_API_KEY`), then retry. Never ask the user to paste the key into
+the conversation.
+
 See `examples.md` for invocation syntax.

@@ -1,4 +1,5 @@
-import { getBaseUrl } from "../config.js";
+import { describeKeyRefusal, parseKeyRefusal } from "../auth.js";
+import { getApiKey, getBaseUrl } from "../config.js";
 import type {
   ApiResponse,
   BatchToolApiResponse,
@@ -9,8 +10,10 @@ import type {
 
 async function request<T>(url: string, init?: RequestInit): Promise<ApiResponse<T>> {
   try {
+    const apiKey = getApiKey();
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
+      ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
       ...init?.headers as Record<string, string>,
     };
 
@@ -21,6 +24,10 @@ async function request<T>(url: string, init?: RequestInit): Promise<ApiResponse<
 
     if (!res.ok) {
       const body = await res.text().catch(() => "");
+      const refusal = parseKeyRefusal(res.status, body);
+      if (refusal) {
+        return { ok: false, error: describeKeyRefusal(refusal), status: res.status };
+      }
       return { ok: false, error: `HTTP ${res.status}: ${body || res.statusText}`, status: res.status };
     }
 
